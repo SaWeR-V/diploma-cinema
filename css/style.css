@@ -1,0 +1,231 @@
+* {
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+@font-face {
+    font-family: 'Roboto-bold';
+    src: url('../fonts/Roboto-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto-thin';
+    src: url('../fonts/Roboto-Thin.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Consolas';
+    src: url('../fonts/consolas.ttf');
+}
+
+.main_container {
+    background-image: url('../images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.main_container::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #000000;
+    opacity: 0.5;
+}
+
+.header_container {
+    position: relative;
+    z-index: 1;
+    max-width: 962px;
+    width: 100%;
+    padding: 14px;
+    top: 1px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    font-family: 'Roboto-bold', sans-serif;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-size: 34px;
+    line-height: 39px;
+    font-weight: 900;
+}
+
+.light {
+    font-family: 'Roboto-thin', sans-serif;
+    font-weight: 100;
+}
+
+.sign_in {
+    border-radius: 3px;
+    border: none;
+    background-color: rgba(22, 166, 175, 1);
+    color: #ffffff;
+    text-transform: uppercase;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    cursor: pointer;
+}
+.sign_in:hover {
+    box-shadow: 0px 0px 10px #ffffff;
+    transition: .3s;
+}
+
+.week {
+    padding: 0;
+    list-style-type: none;
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    color: #000000;
+    max-width: 990px;
+    width: 100%;
+    height: 48px;
+}
+
+.frame {
+    margin-right: 1px;
+    background-color: rgba(255, 255, 255, 0.9);
+    width: 125px;
+    height: 48px;
+    border-radius: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.day {
+    font-family: 'Roboto';
+    color: #000000;
+}
+
+.next {
+    font-family: 'Consolas';
+    font-weight: 700;
+    font-size: 24px;
+    color: #000000;
+}
+
+.frame:hover, .last_frame:hover {
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 10px #ffffff;
+    transition: .3s;
+}
+
+.selected {
+    font-size: 15px;
+    font-weight: 700;
+    width: 241px;
+    height: 52px;
+    background-color: rgba(255, 255, 255, 1);
+    transition: .2s ease-in-out;
+}
+
+.selected:hover {
+    box-shadow: none;
+}
+
+.cinema_block {
+    z-index: 1;
+    background-color: rgba(241, 235, 230, 0.95);
+    border-radius: 2px;
+    display: flex;
+    max-width: 990px;
+    width: 100%;
+    flex-direction: column;
+}
+
+.movie_info {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0 0 10px;
+}
+
+.poster {
+    width: 125px;
+    height: 175px;
+}
+
+.poster::after {
+    content: '';
+    position: relative;
+    display: block;
+    border: solid rgba(57, 57, 57, 1);
+    width: 6px;
+    height: 14px;
+}
+
+.movie_description {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+h3 {
+    font-family: 'Roboto-Bold', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18px;
+}
+
+.description {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16px;
+}
+
+.origins {
+    font-family: 'Roboto-Thin', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 16px;
+}
+
+.halls {
+    display: flex;
+    flex-direction: column;
+    max-width: max-content;
+    padding-left: 10px;
+}
+
+.seances_btns_container {
+    padding: 7.2px 7.33px 8.05px 0;
+}
+
+.seance_btn {
+    border: none;
+    background-color: rgba(255, 255, 255, 1);
+    width: 53px;
+    height: 33px;
+    border-radius: 2px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.12);
+}
+
+.seance_btn:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.24);
+}
