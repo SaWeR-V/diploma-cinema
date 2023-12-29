@@ -223,9 +223,18 @@ h3 {
     font-family: 'Roboto', sans-serif;
     font-size: 15px;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.12);
+    transition: .2s;
 }
 
 .seance_btn:hover {
     cursor: pointer;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.24);
+    background-color: rgb(208, 221, 32);
+    scale: 1.3;
+    font-weight: bolder;
+}
+
+.seance_btn:active {
+    scale: 0.8;
+    transition: .1s;
 }
