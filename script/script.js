@@ -7,6 +7,7 @@ async function getData() {
 const frames = document.querySelectorAll('li.frame');
 const nav = document.querySelector('nav');
 const auth = document.querySelector('button.sign_in');
+const header = document.querySelector('.header_container')
 
 function fillTimetable() {
     const days = document.querySelectorAll('a.day');
@@ -79,8 +80,9 @@ for (let film of filmsDb) {
             let seancesHTML = '';
 
             for (let seance of seances) {
+                
                 seancesHTML += `
-                        <button class="seance_btn" id="${seance.id}">${seance.seance_time}</button>
+                        <button class="seance_btn" id="${hall.id}" film_id="${film.id}">${seance.seance_time}</button>
                         `;
             }
 
@@ -98,24 +100,155 @@ for (let film of filmsDb) {
             </div>
         </section>`;
 }
-
     nav.insertAdjacentHTML('afterend', htmlString)
 };
 
 async function showHall() {
     await addCinemaCards();
+    const dataArr = await getData();
+
     const seanceBtns = document.querySelectorAll('button.seance_btn');
     const cinemaBlocks = document.querySelectorAll('section.cinema_block');
+
+    const halls = dataArr.halls;
+    const films = dataArr.films;
 
     seanceBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
             cinemaBlocks.forEach((block) => {
-                block.remove()
-        });
-            nav.remove();
-            auth.remove();
+                block.classList.add('fade_out');
+                    setTimeout(() => block.classList.add('hidden'), 450);
+                });
+        nav.classList.add('fade_out')
+        auth.classList.add('fade_out')
+        
+        setTimeout(() => {
+            nav.classList.add('hidden') 
+            auth.classList.add('hidden')}, 450);
+        
+        const selectedFilmId = +btn.getAttribute('film_id');
+        const selectedSeance = btn.textContent;
+        let hallName;
+
+        for (let hall of halls) {
+            if (hall.id === +btn.id){
+                hallName = hall.hall_name
+            }
+        };
+
+        for (let film of films){
+            if (selectedFilmId === film.id) {
+                let filmName = film.film_name;
+    
+            header.insertAdjacentHTML('afterend', `
+                                <div class="hall_container fade_in">
+                                    <section class="seance_description">
+                                        <h3>${filmName}</h3>
+                                        <p><span class="seance_starts">Начало сеанса: ${selectedSeance}</span></p>
+                                        <h3>${hallName}</h3>
+                                    </section>
+                                        <div class="places_container">
+                                            <div class="places" id="places">
+                                                <div class="display">экран</div>
+                                            </div>
+                                            <div class="legend">
+                                                <div class="cell_legend"> Свободно (250руб)</div>
+                                                <div class="cell_legend_busy"> Занято</div>
+                                                <div class="cell_legend_vip"> Свободно (350руб)</div>
+                                                <div class="cell_legend_choosen"> Выбрано</div>
+                                            </div>
+                                        </div>
+                                        <div class="book_container">
+                                            <button class="book">Забронировать</button>
+                                        </div>
+                                </div>`);
+                }
+            };
+
+        halls.filter(hall => { 
+            if (hall.id === +btn.id) {
+                for (let k = 0; k < hall.hall_places; k++) {
+                    for (let i = 0; i < hall.hall_rows; i++) {
+                        const placesCont = document.getElementById('places');
+                        placesCont.insertAdjacentHTML('beforeend', `
+                                <div class="cell">${(k * hall.hall_rows) + i + 1}</div>
+                                `)
+                    }
+                }
+            }
+            else {
+                return
+                }
+            const cells = document.querySelectorAll('div.cell');
+            cells.forEach(cell => {
+                cell.innerHTML = null;
+                cell.addEventListener('click', () => {
+                    if (cell.classList.contains('disabled')){
+                        return
+                    }
+                    else {
+                        cell.classList.toggle('cell_active')
+                    }
+                })
+            })
+
+            let temporaryArray = [];
+
+            for (let hallCfg of halls){
+                if (hallCfg.id === +btn.id){
+                    for (let i = 0; i < hallCfg.hall_config.length; i++) {
+                        temporaryArray = temporaryArray.concat(hallCfg.hall_config[i])
+                    }
+                }
+            }
+
+            for (let i = 1; i < cells.length; i++) {
+                cells.forEach(cell => {
+                    cell.id = i++;
+                    cell.setAttribute('status', temporaryArray[i - 2])
+                    cell.setAttribute('price', '')
+                })
+            };
+            cells.forEach(cell => {
+                if (cell.getAttribute('status') === 'vip') {
+                    cell.classList.add('vip')
+                    cell.setAttribute('price', 350)
+                }
+                else if (cell.getAttribute('status') === 'standart') {
+                    cell.setAttribute('price', 250)
+                }
+                else {
+                    cell.classList.add('disabled')
+                    cell.removeAttribute('price', '')
+                }
+            })
+            })
+
+            function check(){
+                const hallWindow = document.querySelector('div.hall_container');
+                hallWindow.classList.add('hidden');
+
+                header.insertAdjacentHTML('afterend', `
+                    <div class="check_header_container">
+                        <h2 class="check_header">Вы выбрали билеты:</h2>
+                    </div>
+                `)
+            }
+
+            const book = document.querySelector('button.book');
+            book.addEventListener('click', () => {
+                check();
+            })
         })
     })
+
 };
 
 showHall();
+
+auth.addEventListener('click', () => {
+    console.log(`Нажата кнопка "${auth.textContent}" - открываем окно авторизации...`)
+
+    location.href = './login.html';
+
+})

@@ -1,0 +1,51 @@
+:root {
+    --color-white: #ffffff;
+    --color-black: #000000;
+}
+
+* {
+    margin: 0;
+}
+
+@font-face {
+    font-family: 'Roboto-bold';
+    src: url('../fonts/Roboto-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto-thin';
+    src: url('../fonts/Roboto-Thin.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Consolas';
+    src: url('../fonts/consolas.ttf');
+}
+
+.main_container {
+    background-image: url('../images/1670472484.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    min-height: 100vh;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.main_container::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: var(--color-black);
+    opacity: 0.5;
+}
