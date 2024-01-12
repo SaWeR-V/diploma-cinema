@@ -8,7 +8,34 @@
 </head>
 <body>
     <main class="main_container">
-
+        <header class="header_container">
+            <a href="#" class="title">
+                Идём<span class="light">в</span>кино
+                <span class="explanation">Администраторррская</span>
+            </a>
+        </header>
+        <form action="https://shfe-diplom.neto-server.ru/" id="signin_form">
+            <div class="auth_header_bkg">
+                <header class="auth_header">Авторизация</header>
+            </div>
+            <div class="auth_container">
+                <div id="auth_frames">
+                    <div class="row"> E-mail
+                        <input type="email" name="login" class="control" placeholder="example@domain.xyz">
+                    </div>
+                    <div class="row"> Пароль
+                        <input type="password" name="password" class="control">
+                    </div>
+                    <div class="row">
+                        <div class="btn_auth_cont">
+                            <button class="btn_auth" id="signin_btn">Авторизоваться</button>
+                        </div>
+                    </div>
+                </div>
+                    <div class="auth_message fade_in hidden" id="auth_message"></div>
+            </div>
+        </form>
     </main>
 </body>
+<script src="./script/auth.js"></script>
 </html>

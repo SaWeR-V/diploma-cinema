@@ -7,6 +7,10 @@
     margin: 0;
 }
 
+a {
+    text-decoration: none;
+}
+
 @font-face {
     font-family: 'Roboto-bold';
     src: url('../fonts/Roboto-Bold.ttf');
@@ -25,6 +29,43 @@
 @font-face {
     font-family: 'Consolas';
     src: url('../fonts/consolas.ttf');
+}
+
+.header_container {
+    position: relative;
+    z-index: 1;
+    max-width: 962px;
+    width: 100%;
+    padding: 14px;
+    top: 1px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    font-family: 'Roboto-bold', sans-serif;
+    color: var(--color-white);
+    text-transform: uppercase;
+    font-size: 34px;
+    line-height: 39px;
+    font-weight: 900;
+    display: flex;
+    width: 216px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.light {
+    font-family: 'Roboto-thin', sans-serif;
+    font-weight: 100;
+}
+
+.explanation {
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 14px;
+    letter-spacing: 5px;
 }
 
 .main_container {
@@ -48,4 +89,136 @@
     width: 100%;
     background-color: var(--color-black);
     opacity: 0.5;
+}
+
+.auth_container {
+    position: relative;
+    z-index: 1;
+    width: 480px;
+    display: flex;
+    background-color: rgba(234, 233, 235, 0.95);
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0px 35px 0px;
+}
+
+.auth_header_bkg {
+    background-color: rgba(99, 83, 108, 1);
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.auth_header {
+    font-family: 'Roboto-bold';
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 22px;
+    color: var(--color-white);
+    text-transform: uppercase;
+    padding: 16px 104px 16px 104px;
+    text-align: center;
+}
+
+.row {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14px;
+    color: rgba(132, 132, 132, 1);
+    gap: 1.6px;
+    padding-top: 10px;
+}
+
+.control {
+    padding: 8px 106.2px 9px 8.8px;
+    color: rgba(117, 117, 117, 1);
+    border: 1px solid rgba(183, 183, 183, 1);
+}
+
+.control:focus {
+    border: 1px solid rgba(255, 255, 255, 1);
+}
+
+.btn_auth_cont {
+    padding: 17px 41.26px 0px 41.26px;
+}
+
+.btn_auth {
+    cursor: pointer;
+    background-color: rgba(22, 166, 175, 1);
+    color: var(--color-white);
+    border-radius: 3px;
+    border: none;
+    padding: 11.2px 31.55px 11.9px 31.93px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    text-transform: uppercase;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.btn_auth:hover {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.24);
+}
+
+.auth_message {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    padding-top: 15px;
+    width: 80%;
+    display: inline-block;
+    text-align: center;
+}
+
+.fade_in {
+    animation-name: fadeIn;
+    animation-duration: .5s;
+}
+
+.fade_out {
+    animation-name: fadeOut;
+    animation-duration: .5s;
+}
+
+.hidden {
+    display: none;
+}
+
+.smooth_transition {
+    animation: smoothTransition;
+    animation-timing-function: ease-out;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    position: relative;
+}
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes smoothTransition {
+    0% {
+        top: 0vh;
+    }
+    100% {
+        top: 25vh;
+    }
 }
