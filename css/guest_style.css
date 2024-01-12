@@ -63,6 +63,7 @@ a {
     top: 1px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .title {
@@ -94,6 +95,11 @@ a {
 .sign_in:hover {
     box-shadow: 0px 0px 10px var(--color-white);
     transition: .3s;
+}
+
+.sign_in:active {
+    scale: 0.9;
+    transition: .15s;
 }
 
 .week {

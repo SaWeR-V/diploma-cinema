@@ -1,16 +1,17 @@
 const form = document.getElementById('signin_form');
 const signIn = document.getElementById('signin_btn');
-const login = document.getElementsByName('login');
-const pass = document.getElementsByName('password');
+const login = document.getElementById('login');
+const pass = document.getElementById('password');
 const message = document.getElementById('auth_message');
 const authFrames = document.getElementById('auth_frames');
-
+const header = document.getElementById('header');
+let logout = null;
 let authKeys;
 
-form.addEventListener('change', () => {
+form.addEventListener('input', () => {
     authKeys = {
-        login: login[0].value,
-        password: pass[0].value
+        login: login.value,
+        password: pass.value
     }
 });
 
@@ -27,18 +28,29 @@ async function authorize(){
     if (answer.success === true) {
         localStorage.setItem('authData', JSON.stringify(authKeys));
 
-        login[0].value = null;
-        pass[0].value = null; 
+        login.value = null;
+        pass.value = null; 
 
         message.classList.remove('hidden');
         authFrames.replaceWith(message);
         message.innerHTML = `Добро пожаловать, <b>${authKeys.login}</b>!`;
 
-        form.classList.add('smooth_transition');
+        form.classList.add('smooth_out');
+        setTimeout(() => {
+            form.remove();
+            header.insertAdjacentHTML('beforeend', `
+                <button class="sign_out fade_in" id="logout">Выйти</button>
+            `);
+            logout = document.getElementById('logout');
+            logout.addEventListener('click', () => {
+                localStorage.clear()
+            });
+        }, 3600);
     }
+
     else {
-        login[0].value = null;
-        pass[0].value = null; 
+        login.value = null;
+        pass.value = null; 
 
         message.classList.remove('hidden');
         message.innerHTML = answer.error;
