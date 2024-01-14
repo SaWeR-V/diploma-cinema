@@ -167,18 +167,24 @@ async function showHall() {
 
         halls.filter(hall => { 
             if (hall.id === +btn.id) {
-                for (let k = 0; k < hall.hall_places; k++) {
-                    for (let i = 0; i < hall.hall_rows; i++) {
-                        const placesCont = document.getElementById('places');
-                        placesCont.insertAdjacentHTML('beforeend', `
-                                <div class="cell">${(k * hall.hall_rows) + i + 1}</div>
-                                `)
+                const placesCont = document.getElementById('places');
+                for (let i = 0; i < hall.hall_rows; i++) {
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'row';
+                    
+                    for (let k = 0; k < hall.hall_places; k++) {
+                        const seat = document.createElement('div');
+                        seat.className = 'cell';
+                        seat.textContent = (i * hall.hall_places) + k + 1;
+                        rowContainer.appendChild(seat);
                     }
+            
+                    placesCont.appendChild(rowContainer);
                 }
+            } else {
+                return;
             }
-            else {
-                return
-                }
+            
             const cells = document.querySelectorAll('div.cell');
             cells.forEach(cell => {
                 cell.innerHTML = null;
@@ -210,16 +216,18 @@ async function showHall() {
                 })
             };
             cells.forEach(cell => {
-                if (cell.getAttribute('status') === 'vip') {
-                    cell.classList.add('vip')
-                    cell.setAttribute('price', 350)
-                }
-                else if (cell.getAttribute('status') === 'standart') {
-                    cell.setAttribute('price', 250)
-                }
-                else {
-                    cell.classList.add('disabled')
-                    cell.removeAttribute('price', '')
+                for (let hall of halls) {
+                    if (cell.getAttribute('status') === 'vip') {
+                        cell.classList.add('vip')
+                        cell.setAttribute('price', hall.hall_price_vip)
+                    }
+                    else if (cell.getAttribute('status') === 'standart') {
+                        cell.setAttribute('price', hall.hall_price_standart)
+                    }
+                    else {
+                        cell.classList.add('disabled')
+                        cell.removeAttribute('price', '')
+                    }
                 }
             })
             })

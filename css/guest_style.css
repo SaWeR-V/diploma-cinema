@@ -302,9 +302,15 @@ h3 {
     display: flex;
     align-content: center;
     flex-wrap: wrap;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     padding: 15px 30px 15px 30px;
+    gap: 4px;
+    align-items: center;
+}
+
+.row {
+    display: flex;
     gap: 4px;
 }
 
@@ -314,6 +320,10 @@ h3 {
     border-radius: 4px;
     background-color: rgba(255, 255, 255, 1);
     border: 1px solid rgba(82, 82, 82, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(90deg);
 }
 
 .vip {

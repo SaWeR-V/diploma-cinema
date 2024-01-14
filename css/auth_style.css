@@ -196,6 +196,127 @@ a {
     transition: .15s;
 }
 
+.admin_table_container {
+    z-index: 1;
+    background-color: rgba(234, 233, 235, 0.95);
+    width: 962px;
+    display: flex;
+}
+
+.hall_management_container {
+    width: 962px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section_header::before {
+    content: '';
+    position: relative;
+    display: block;
+    height: 44px;
+    width: 44px;
+    border: 4px solid rgba(188, 149, 214, 1);
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 50%;
+}
+
+.section_header {
+    width: 816px;
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(99, 83, 108, 1);
+    padding: 35px 42px 35px 104px;
+    align-items: center;
+}
+
+.menu_header {
+    color:rgba(255, 255, 255, 1);
+    font-family: 'Roboto-bold';
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 22px;
+    line-height: 25px;
+}
+
+.heading {
+    display: flex;
+    width: 720px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.open_menu {
+    background: url('../svg/arrow_dn.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 26px;
+    height: 15px;
+    border: none;
+    cursor: pointer;
+    transform: rotateZ(0deg);
+    transition: .3s ease-out;
+}
+
+.open_menu:hover {
+    transform: rotateZ(-180deg);
+    transition: .3s ease-out; 
+}
+
+.content_container {
+    padding: 35px 42px 35px 200px;
+}
+
+.halls_list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style-type: none;
+    padding: 0;
+}
+
+.available_halls{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+}
+
+.halls_list_item::before {
+    content: '–';
+    padding: 0 10px 0 10px;
+}
+
+.halls_list_item{
+    display: flex;
+    align-items: center;
+    font-family: 'Roboto-bold', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 18px;
+    text-transform: uppercase;
+}
+
+.remove_hall {
+    background: url('../images/trash.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: none;
+    height: 20px;
+    width: 20px;
+    margin-left: 3px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.remove_hall:hover {
+    cursor: pointer;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.24);
+}
+
+.remove_hall:active {
+    scale: 0.9;
+}
+
 .fade_in {
     animation-name: fadeIn;
     animation-duration: .5s;
@@ -252,15 +373,23 @@ a {
 
 @media (max-width: 640px) {
     .header_container {
-        width: 475px;
+        max-width: 475px;
+        width: 70%;
     }
     .form {
-        width: 80%;
+        max-width: 450px;
+        width: 75%;
+        scale: 0.8;
+        z-index: 1;
     }
     .auth_container {
         width: 100%;
     }
     .main_container {
-        background-position: 85%;
+        background-position: 82%;
+        background-size: cover;
+    }
+    .admin_table_container {
+        scale: 0.6;
     }
 }
