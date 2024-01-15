@@ -201,6 +201,7 @@ a {
     background-color: rgba(234, 233, 235, 0.95);
     width: 962px;
     display: flex;
+    flex-direction: column;
 }
 
 .hall_management_container {
@@ -245,7 +246,7 @@ a {
     align-items: center;
 }
 
-.open_menu {
+.menu_toggle {
     background: url('../svg/arrow_dn.svg');
     background-repeat: no-repeat;
     background-position: center;
@@ -257,7 +258,7 @@ a {
     transition: .3s ease-out;
 }
 
-.open_menu:hover {
+.menu_toggle:hover {
     transform: rotateZ(-180deg);
     transition: .3s ease-out; 
 }
@@ -274,7 +275,7 @@ a {
     padding: 0;
 }
 
-.available_halls{
+.paragraph {
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     font-size: 16px;
@@ -286,7 +287,7 @@ a {
     padding: 0 10px 0 10px;
 }
 
-.halls_list_item{
+.halls_list_item {
     display: flex;
     align-items: center;
     font-family: 'Roboto-bold', sans-serif;
@@ -296,16 +297,28 @@ a {
     text-transform: uppercase;
 }
 
-.remove_hall {
-    background: url('../images/trash.png');
+.remove_hall::before {
+    content: '';
+    display: block;
+    background-image: url('../images/trash.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    width: 12px;
+    height: 12px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.remove_hall {
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 1);
     border: none;
     height: 20px;
     width: 20px;
     margin-left: 3px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+    padding: 0;
 }
 
 .remove_hall:hover {
@@ -315,6 +328,55 @@ a {
 
 .remove_hall:active {
     scale: 0.9;
+}
+
+.halls {
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+}
+
+.config_list {
+    list-style-type: none;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.config_btn {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    text-transform: uppercase;
+    background-color: rgba(255, 255, 255, 0.45);
+    padding: 12.2px 20.25px 12.9px 21px;
+    border-radius: 3px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.config_btn:hover {
+    cursor: pointer;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.24);
+}
+
+.config_selected {
+    padding: 15.41px 23.03px 13.9px 23.1px;
+    font-family: 'Roboto-bold', sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    transition: .2s;
+}
+
+.places_quantity {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 20px;
+}
+
+.places_inputs {
+    display: flex;
 }
 
 .fade_in {
@@ -368,28 +430,5 @@ a {
     100% {
         opacity: 0;
         scale: 1.1;
-    }
-}
-
-@media (max-width: 640px) {
-    .header_container {
-        max-width: 475px;
-        width: 70%;
-    }
-    .form {
-        max-width: 450px;
-        width: 75%;
-        scale: 0.8;
-        z-index: 1;
-    }
-    .auth_container {
-        width: 100%;
-    }
-    .main_container {
-        background-position: 82%;
-        background-size: cover;
-    }
-    .admin_table_container {
-        scale: 0.6;
     }
 }

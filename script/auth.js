@@ -20,7 +20,7 @@ form.addEventListener('input', () => {
     }
 });
 
-async function authorize(){
+async function authorize() {
     const response = await fetch('https://shfe-diplom.neto-server.ru/login', {
         method: 'POST',
         headers: {
@@ -38,6 +38,7 @@ async function authorize(){
 
         message.classList.remove('hidden');
         authFrames.replaceWith(message);
+        document.title = 'Идём в кино: управление';
         message.innerHTML = `Добро пожаловать, <b>${authKeys.login}</b>!`;
 
         form.classList.add('smooth_out');
@@ -70,6 +71,8 @@ signIn.addEventListener('click', (e) => {
 
 if (localStorage.getItem('authData') !== null) {
     form.remove();
+    document.title = 'Идём в кино: управление';
+
     header.insertAdjacentHTML('beforeend', `
                 <button class="sign_out fade_in" id="logout">Выйти</button>
             `);
@@ -95,18 +98,17 @@ async function identify() {
         seances = dataArr.seances;
     };
 
-
-
- 
 async function renderAdminTable() {
     await identify();
 
     let hallsHTML = '';
+    let hallsConfig = '';
 
     for (let hall of halls){
         let hallNames = hall.hall_name;
         let hallId = hall.id;
         hallsHTML += `<li class="halls_list_item">${hallNames}<button class="remove_hall" id="${hallId}"></button></li>`;
+        hallsConfig += `<li class="config_btn" id="${hallId}">${hallNames}</li>`
     }
 
     header.insertAdjacentHTML('afterend', `
@@ -115,23 +117,88 @@ async function renderAdminTable() {
                 <div class="section_header">
                     <div class="heading">
                         <h2 class="menu_header">Управление залами</h2>
-                        <button class="open_menu"></button>
+                        <button class="menu_toggle"></button>
                     </div>
                 </div>
                 <div class="content_container">
                     <ul class="halls_list">
-                        <p class="available_halls">Доступные залы:</p>
+                        <p class="paragraph">Доступные залы:</p>
                         ${hallsHTML}
                     </ul>
                 </div>
+            </section>
+            <section class="hall_configuration">
                 <div class="section_header">
                     <div class="heading">
                         <h2 class="menu_header">Конфигурация залов</h2>
-                        <button class="open_menu"></button>
+                        <button class="menu_toggle"></button>
+                    </div>
+                </div>
+                <div class="content_container">
+                    <div class="halls">
+                        <p class="paragraph">Выберите зал для конфигурации:</p>
+                        <ul class="config_list">
+                            ${hallsConfig}
+                        </ul>
                     </div>
                 </div>
             </section>
         </main>
     `)
+
+
+    const menuToggle = document.querySelectorAll('.menu_toggle');
+    const configBtns = document.querySelectorAll('.config_btn');
+
+    menuToggle.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const section = btn.closest('section');
+            if (section) {
+                const currentContainer = section.querySelector('.content_container')
+                if (currentContainer) {
+                    currentContainer.classList.toggle('hidden')
+                }
+            }
+        })
+    });
+
+    let hallPlaces = '';
     
-}
+    configBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            configBtns.forEach((selected) => {
+                selected.classList.remove('config_selected');
+                btn.classList.add('config_selected');
+            })
+
+            let frame = document.querySelector('.halls');
+
+            for (let hall of halls) {
+                if (hall.id === +btn.id) {
+                    
+                    row = hall.hall_rows;
+                    seat = hall.hall_places;
+
+                    hallPlaces += `<label>Рядов, шт
+                                        <form><input class="input" name="row" type="text" value="${row}">
+                                    </label>
+                                    <label>Мест, шт
+                                        <input class="input" name="seat" type="text" value="${seat}"></form>
+                                    </label>
+                                    `;
+                
+                    if (!frame.querySelector('div.places_quantity')) {
+                        frame.insertAdjacentHTML('beforeend', `
+                            <div class="places_quantity">
+                                <p class="paragraph">Укажите количество рядов и максимальное количество кресел в ряду:</p>
+                                <div class="places_inputs">${hallPlaces}</div>
+                            </div>
+                        `)
+                    }
+                }
+            }
+
+        })
+    });
+
+};

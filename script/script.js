@@ -33,7 +33,7 @@ function fillTimetable() {
 fillTimetable();
 
 frames.forEach((frame) => {
-    frame.addEventListener('click', ()=> {        
+    frame.addEventListener('click', () => {        
         frames.forEach((active) => {
             if(!frame.classList.contains('last_frame')){
                 active.classList.remove('selected')
@@ -152,10 +152,6 @@ async function showHall() {
                                                 <div class="display">экран</div>
                                             </div>
                                             <div class="legend">
-                                                <div class="cell_legend"> Свободно (250руб)</div>
-                                                <div class="cell_legend_busy"> Занято</div>
-                                                <div class="cell_legend_vip"> Свободно (350руб)</div>
-                                                <div class="cell_legend_choosen"> Выбрано</div>
                                             </div>
                                         </div>
                                         <div class="book_container">
@@ -164,6 +160,18 @@ async function showHall() {
                                 </div>`);
                 }
             };
+
+        for (let hall of halls) {
+            let legend = document.querySelector('.legend');
+            if (hall.id === +btn.id) {
+                legend.insertAdjacentHTML('afterbegin', `
+                    <div class="cell_legend"> Свободно (${hall.hall_price_standart}руб)</div>
+                    <div class="cell_legend_busy"> Занято</div>
+                    <div class="cell_legend_vip"> Свободно (${hall.hall_price_vip}руб)</div>
+                    <div class="cell_legend_choosen"> Выбрано</div>
+                `)
+            }
+        }
 
         halls.filter(hall => { 
             if (hall.id === +btn.id) {
