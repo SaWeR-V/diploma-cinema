@@ -183,7 +183,6 @@ async function showHall() {
                     for (let k = 0; k < hall.hall_places; k++) {
                         const seat = document.createElement('div');
                         seat.className = 'cell';
-                        seat.textContent = (i * hall.hall_places) + k + 1;
                         rowContainer.appendChild(seat);
                     }
             
@@ -195,7 +194,6 @@ async function showHall() {
             
             const cells = document.querySelectorAll('div.cell');
             cells.forEach(cell => {
-                cell.innerHTML = null;
                 cell.addEventListener('click', () => {
                     if (cell.classList.contains('disabled')){
                         return
@@ -220,11 +218,6 @@ async function showHall() {
                 cells.forEach(cell => {
                     cell.id = i++;
                     cell.setAttribute('status', temporaryArray[i - 2])
-                    cell.setAttribute('price', '')
-                })
-            };
-            cells.forEach(cell => {
-                for (let hall of halls) {
                     if (cell.getAttribute('status') === 'vip') {
                         cell.classList.add('vip')
                         cell.setAttribute('price', hall.hall_price_vip)
@@ -236,8 +229,8 @@ async function showHall() {
                         cell.classList.add('disabled')
                         cell.removeAttribute('price', '')
                     }
-                }
-            })
+                })
+            };
             })
 
             function check(){
@@ -263,8 +256,5 @@ async function showHall() {
 showHall();
 
 auth.addEventListener('click', () => {
-    console.log(`Нажата кнопка "${auth.textContent}" - открываем окно авторизации...`)
-
     location.href = './login.html';
-
 })

@@ -222,11 +222,11 @@ a {
 }
 
 .section_header {
-    width: 816px;
+    width: 875px;
     display: flex;
     justify-content: space-between;
     background-color: rgba(99, 83, 108, 1);
-    padding: 35px 42px 35px 104px;
+    padding: 35px 42px 35px 45px;
     align-items: center;
 }
 
@@ -241,7 +241,7 @@ a {
 
 .heading {
     display: flex;
-    width: 720px;
+    width: 790px;
     justify-content: space-between;
     align-items: center;
 }
@@ -264,7 +264,7 @@ a {
 }
 
 .content_container {
-    padding: 35px 42px 35px 200px;
+    padding: 35px 42px 35px 128px;
 }
 
 .halls_list {
@@ -280,6 +280,30 @@ a {
     font-weight: 400;
     font-size: 16px;
     line-height: 18px;
+}
+
+.create_hall {
+    padding: 11.2px 31.38px 11.9px 31.73px;
+    background-color: rgba(22, 166, 175, 1);
+    border: none;
+    color: rgba(255, 255, 255, 1);
+    border-radius: 3px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+.create_hall:hover {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.24);
+    cursor: pointer;
+}
+
+.create_hall:active {
+    scale: 0.95;
 }
 
 .halls_list_item::before {
@@ -330,7 +354,7 @@ a {
     scale: 0.9;
 }
 
-.halls {
+.block {
     display: flex;
     gap: 12px;
     flex-direction: column;
@@ -341,6 +365,7 @@ a {
     padding: 0;
     display: inline-flex;
     align-items: center;
+    height: 45.3px;
 }
 
 .config_btn {
@@ -377,6 +402,247 @@ a {
 
 .places_inputs {
     display: flex;
+    align-items: center;
+    width: 538px;
+}
+
+.label_cont {
+    display: flex;
+    flex-direction: row;
+}
+
+.annot_col {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    line-height: 14px;
+    color: rgba(132, 132, 132, 1);
+    gap: 1.6px;
+    padding-top: 10px;
+}
+
+.multiplier {
+    font-family: 'Consolas', sans-serif;
+    color: rgba(132, 132, 132, 1);
+    font-size: 18px;
+    line-height: 21px;
+    position: relative;
+    top: 8px;
+    margin: 0 20px 0 20px;
+}
+
+.input {
+    border: 1px solid rgba(183, 183, 183, 1);
+    padding: 8px 8.8px 9px 8.8px;
+    width: 100px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    color: rgba(117, 117, 117, 1);
+}
+
+.hall_map {
+    padding-top: 20px;
+    display: flex;
+    gap: 11px;
+    flex-direction: column;
+}
+
+.hall_map_legend {
+    width: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cell {
+    width: 26px;
+    height: 26px;
+    border: 1px solid rgba(57, 57, 57, 1);
+    background-color: rgba(196, 196, 196, 1);
+    border-radius: 4px;
+}
+
+.vip {
+    border: 1px solid rgba(10, 130, 138, 1);
+    background: repeating-linear-gradient(128deg, rgba(10, 130, 138, 1) 0, rgba(176, 214, 216, 1) 2px, transparent 3px, transparent 3px);
+}
+
+.disabled {
+    border: 1px solid rgba(196, 196, 196, 1);
+    background: none;
+}
+
+.legend_annotation {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: rgba(132, 132, 132, 1);
+}
+
+.map_container {
+    padding: 25px 0px 25px 0px;
+    border: 1px solid var(--color-black);
+}
+
+.places_container::before {
+    content: 'экран';
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+    letter-spacing: 19px;
+    margin-right: -19px;
+    text-transform: uppercase;
+    padding-bottom: 20px;
+}
+
+.places_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.hall_row {
+    display: flex;
+    gap: 10px;
+}
+
+.btns_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 15px;
+    padding-top: 17px;
+}
+
+.cancel {
+    padding: 11.2px 31.39px 11.9px 31.76px;
+    border: none;
+    color: rgba(99, 83, 108, 1);
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    text-transform: uppercase;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.save {
+    padding: 11.2px 32px 11.9px 32px;
+    border: none;
+    background-color: rgba(22, 166, 175, 1);
+    color: var(--color-white);
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    text-transform: uppercase;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.cancel:hover, .save:hover {
+    cursor: pointer;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.24);
+}
+
+.cancel:active, .save:active {
+    scale: 0.95;
+}
+
+.price {
+    color: var(--color-black);
+}
+
+.price-vip {
+    width: 74px;
+    margin-right: 26px;
+}
+
+.price_inputs {
+    display: flex;
+    flex-direction: column;
+}
+
+.price_annotation {
+    display: flex;
+    align-items: center;
+}
+
+.price_legend_block {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+}
+
+.price_legend {
+    margin: 0 10px 0 10px;
+}
+
+.add_film {
+    padding: 11.2px 31.38px 11.9px 31.73px;
+    background-color: rgba(22, 166, 175, 1);
+    border: none;
+    color: rgba(255, 255, 255, 1);
+    border-radius: 3px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    text-transform: uppercase;
+    width: 194px;
+}
+
+.add_film:hover {
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.24);
+    cursor: pointer;
+}
+
+.add_film:active {
+    scale: 0.95;
+}
+
+.films_collection {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    grid-template-rows: repeat(2, auto);
+    gap: 15px;
+    width: 790px;
+}
+
+.card_control {
+    display: flex;
+    justify-content: space-between;
+}
+
+.film_card {
+    width: 259px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    display: flex;
+}
+
+.poster {
+    width: 38px;
+    height: 50px;
+}
+
+.film_name {
+    font-family: 'Roboto-bold', sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: 500;
+}
+
+.film_info {
+    display: flex;
+    flex-direction: column;
+    width: 210px;
+    justify-content: flex-end;
+    padding-left: 10px;
+    gap: 10px;
 }
 
 .fade_in {
