@@ -101,32 +101,40 @@ async function identify() {
 async function renderAdminTable() {
     await identify();
 
+    /*   Блок формирования DOM   */
+
+
     let hallsHTML = '';
     let hallsCfgBtns = '';
     let pricesCfgBtns = '';
     let filmsCollection = '';
-    let hallTimeline = '';
+    let hallTimelines = '';
+    let salesCfgBtns = '';
+
 
     for (let hall of halls){
         let hallNames = hall.hall_name;
         let hallId = hall.id;
+        let hallStatus = hall.hall_open;
+
         hallsHTML += `<li class="halls_list_item">${hallNames}<button class="remove_hall" id="${hallId}"></button></li>`;
         hallsCfgBtns += `<li class="config_btn hall-cfg" id="${hallId}">${hallNames}</li>`
         pricesCfgBtns += `<li class="config_btn prices-cfg" id="${hallId}">${hallNames}</li>`
-        hallTimeline += `<div class="timeline" id="timeline" ondrop="drop(event)" ondragover="allowDrop(event)">`
+        hallTimelines += `<div class="timeline" id="${hallId}" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`;
+        salesCfgBtns += `<li class="config_btn sales-cfg" id="${hallId}" opened="${hallStatus}">${hallNames}</li>`
     }
 
     header.insertAdjacentHTML('afterend', `
         <main class="admin_table_container fade_in">
             <section class="hall_management_container">
-                <div class="section_header">
+                <div class="section_header"><div class="stick-header-first"></div>
                     <div class="heading">
                         <h2 class="menu_header">Управление залами</h2>
                         <button class="menu_toggle"></button>
                     </div>
                 </div>
                 <div class="content_container">
-                    <ul class="halls_list">
+                    <ul class="halls_list" id="hallsList">
                         <p class="paragraph">Доступные залы:</p>
                         ${hallsHTML}
                     </ul>
@@ -134,7 +142,7 @@ async function renderAdminTable() {
                 </div>
             </section>
             <section class="hall_configuration">
-                <div class="section_header">
+                <div class="section_header"><div class="stick"></div>
                     <div class="heading">
                         <h2 class="menu_header">Конфигурация залов</h2>
                         <button class="menu_toggle"></button>
@@ -176,13 +184,104 @@ async function renderAdminTable() {
                     <div class="block films">
                         <button class="add_film">Добавить фильм</button>
                         <div class="films_collection"></div>
-                        ${hallTimeline}
+                        ${hallTimelines}
+                    </div>
+                </div>
+            </section>
+            <section class="hall_configuration">
+                <div class="section_header"><div class="stick-header-last"></div>
+                    <div class="heading">
+                        <h2 class="menu_header">Открыть продажи</h2>
+                        <button class="menu_toggle"></button>
+                    </div>
+                </div>
+                <div class="content_container">
+                    <div class="block sales">
+                        <p class="paragraph">Выберите зал для открытия/закрытия продаж:</p>
+                        <ul class="config_list">
+                            ${salesCfgBtns}
+                        </ul>
                     </div>
                 </div>
             </section>
         </main>
-    `)
+    `);
 
+    /*---Конец блока формирования DOM---*/
+
+    /*   Блок ПопАпа   */
+
+    const createHall = document.querySelector('button.create_hall');
+    createHall.addEventListener('click', () => {
+        const main = document.querySelector('main.main_container');
+        main.insertAdjacentHTML('afterbegin', `
+            <div class="popup_container">
+                <div class="new_hall_popup">
+                    <div class="new_hall_popup_header">Добавление зала<div class="close_popup"></div></div>
+                    <label class="new_hall_popup_content">
+                        <span class="popup_input_annot">Название зала</span>
+                        <input class="new_hall_popup_input" type="text" id="new_hall_popup_input" placeholder="Например, «Зал 1»">
+                    </label>
+                    <div class="popup_btns_container">
+                        <button class="popup_btn" id="add-hall">Добавить зал</button>
+                        <button class="popup_btn popup_cancel">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        `)
+
+        const closePopup = document.querySelector('div.close_popup');
+        const cancel = document.querySelector('button.popup_cancel');
+        const newHallName = document.getElementById('new_hall_popup_input');
+        const addHall = document.getElementById('add-hall');
+        const popupCont = document.querySelector('div.popup_container');
+
+        [closePopup, cancel].forEach(elem => {
+            elem.addEventListener('click', () => {
+                popupCont.remove()
+            })
+        });
+
+        addHall.addEventListener('click', () => {
+            const params = new FormData()
+            params.set('hallName', `${newHallName.value}`)
+            fetch('https://shfe-diplom.neto-server.ru/hall', {
+                method: 'POST',
+                body: params 
+            })
+            .then( response => response.json())
+            .then( data => console.log( data ));
+
+            const hallsList = document.getElementById('hallsList');
+            hallsList.innerHTML = '';
+        
+            for (let hall of halls) {
+                let hallNames = hall.hall_name;
+                let hallId = hall.id;
+                hallsList.innerHTML += `<li class="halls_list_item">${hallNames}<button class="remove_hall" id="${hallId}"></button></li>`;
+            }
+
+            popupCont.remove()
+        });
+
+    });
+
+    /*---Конец блока ПопАпа---*/
+
+    /*   Назначение действий для кнопок (скрытие секций, удаление залов)   */
+
+    const removeHallBtns = document.querySelectorAll('button.remove_hall');
+
+    removeHallBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            fetch(`https://shfe-diplom.neto-server.ru/hall/${+btn.id}`, {
+            method: 'DELETE',
+            })
+            .then( response => response.json())
+            .then( data => console.log( data ));
+        })
+    });
+ 
 
     const menuToggle = document.querySelectorAll('.menu_toggle');
 
@@ -193,10 +292,15 @@ async function renderAdminTable() {
                 const currentContainer = section.querySelector('.content_container')
                 if (currentContainer) {
                     currentContainer.classList.toggle('hidden')
+                    btn.classList.toggle('closed')
                 }
             }
         })
     });
+
+    /*---------------*/
+
+    /*   Блок конфигурации посадочных мест   */
 
     const configHallBtns = document.querySelectorAll('.hall-cfg');
 
@@ -230,8 +334,6 @@ async function renderAdminTable() {
                                 </label>
                                 `;
             
-                let rowArea = document.getElementById('row');
-                let seatArea = document.getElementById('seat');
                    
                 if (frame) {
                     if (!frame.querySelector('div.places_quantity')) {
@@ -254,14 +356,17 @@ async function renderAdminTable() {
                                 <div class="map_container" id="map_container"></div>
                                 <div class="btns_container">
                                     <button class="cancel">Отмена</button>
-                                    <button class="save">Сохранить</button>
+                                    <button class="save" id="places_grid">Сохранить</button>
                                 </div>
                             </div>
                             `)
-                    }
-                               
-                const mapContainer = document.getElementById('map_container');
+                    };
+                            
+                const rowArea = document.getElementById('row');
+                const seatArea = document.getElementById('seat');
 
+                const mapContainer = document.getElementById('map_container');
+                
                 mapContainer.innerHTML = `<div class="places_container" id="places_container"></div>`;
 
                 if (rowArea && seatArea) {
@@ -282,35 +387,35 @@ async function renderAdminTable() {
 
                         placesContainer.appendChild(rowContainer);
                     }
+
                     if (placesContainer) {
                         const cells = document.querySelectorAll('div.cell');
                         let currentStatusIndex = 0;
-
-                        for (let i = 0; i < cells.length; i++) {
-
-                            cells[i].setAttribute('status', hallCfg[i]);
+                    
+                        for (let cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+                            const cell = cells[cellIndex];
+                            const initStatus = hallCfg[cellIndex]; 
+                            cell.setAttribute('status', initStatus);
+                    
                             const statuses = ['standart', 'vip', 'disabled'];
-
-                            cells[i].addEventListener('click', () => {
-                                cells[i].setAttribute('status', statuses[currentStatusIndex])
+                    
+                            cell.addEventListener('click', () => {
+                                const newStatus = statuses[currentStatusIndex];
+                                cell.setAttribute('status', newStatus); 
                                 currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
-
-                                cells[i].classList.remove(...statuses);
-                                cells[i].classList.add(statuses[currentStatusIndex]);
-                            }) 
-
-                            if (cells[i].getAttribute('status') === 'vip') {
-                                cells[i].classList.add('vip')
-                            }
-                            else if (cells[i].getAttribute('status') === 'standart') {
-                                cells[i].classList.add('standart')
-                            }
-                            else {
-                                cells[i].classList.add('disabled')
+                    
+                                cell.classList.remove(...statuses);
+                                cell.classList.add(newStatus);
+                            });
+                    
+                            if (initStatus === 'standart') {
+                                cell.classList.add('standart');
+                            } else if (initStatus === 'vip') {
+                                cell.classList.add('vip');
+                            } else {
+                                cell.classList.add('disabled');
                             }
                         }
-
-                        
                     }
                 }
                     
@@ -330,61 +435,72 @@ async function renderAdminTable() {
                     });
                 }
 
-                function updatePlacesContainer(newRow, newSeat) {
-                    const placesContainer = document.getElementById('places_container');
-                    placesContainer.innerHTML = '';
-                    
-                    for (let i = 0; i < newRow; i++) {
-                        const rowContainer = document.createElement('div');
-                        rowContainer.className = 'hall_row';
-                    
-                        for (let k = 0; k < newSeat; k++) {
-                            const seat = document.createElement('div');
-                            seat.className = 'cell';
-                            rowContainer.appendChild(seat);
-                        }
-                    
-                        placesContainer.appendChild(rowContainer);
-                        }
-
-                        const cells = document.querySelectorAll('div.cell');
-                        let currentStatusIndex = 0;
-
-                        for (let i = 0; i < cells.length; i++) {
-
-                            cells[i].setAttribute('status', hallCfg[i]);
-                            const statuses = ['standart', 'vip', 'disabled'];
-
-                            cells[i].addEventListener('click', () => {
-                                cells[i].setAttribute('status', statuses[currentStatusIndex])
-                                currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
-
-                                cells[i].classList.remove(...statuses);
-                                cells[i].classList.add(statuses[currentStatusIndex]);
-                            }) 
-
-                            if (cells[i].getAttribute('status') === 'vip') {
-                                cells[i].classList.add('vip')
-                            }
-                            else if (cells[i].getAttribute('status') === 'standart') {
-                                cells[i].classList.add('standart')
-                            }
-                            else {
-                                cells[i].classList.add('disabled')
-                            }
-                        }
-                    }
                 }
 
                 if (hall.id === +btn.id) {
                     for (let i = 0; i < hall.hall_config.length; i++) {
-                        hallCfg = hallCfg.concat(hall.hall_config[i])
+                        hallCfg.push(...hall.hall_config[i]);
                     }
                 }
-            }
+            };
+
+            function updatePlacesContainer(newRow, newSeat) {
+                const placesContainer = document.getElementById('places_container');
+                placesContainer.innerHTML = '';
+                
+                for (let i = 0; i < newRow; i++) {
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'hall_row';
+                
+                    for (let k = 0; k < newSeat; k++) {
+                        const seat = document.createElement('div');
+                        seat.className = 'cell';
+                        rowContainer.appendChild(seat);
+                    }
+                
+                    placesContainer.appendChild(rowContainer);
+                    }
+            
+                    const cells = document.querySelectorAll('div.cell');
+                    let currentStatusIndex = 0;
+            
+                    for (let cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+                        const cell = cells[cellIndex];
+                        const initStatus = hallCfg[cellIndex]; 
+                        cell.setAttribute('status', initStatus);
+                
+                        const statuses = ['standart', 'vip', 'disabled'];
+                
+                        cell.addEventListener('click', () => {
+                            const newStatus = statuses[currentStatusIndex];
+                            cell.setAttribute('status', newStatus); 
+                            currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
+                
+                            cell.classList.remove(...statuses);
+                            cell.classList.add(newStatus);
+                        });
+                
+                        if (initStatus === 'standart') {
+                            cell.classList.add('standart');
+                        } else if (initStatus === 'vip') {
+                            cell.classList.add('vip');
+                        } else {
+                            cell.classList.add('disabled');
+                        }
+                    }
+                };
+
+            sendGrid();
+
         })
     });
 
+
+
+    /*---Конец блока конфигурации посадочных мест---*/
+
+    /*   Блок конфигурации цен   */
+    
     const configPricesBtns = document.querySelectorAll('.prices-cfg');
 
     configPricesBtns.forEach((btn) => {
@@ -428,7 +544,7 @@ async function renderAdminTable() {
                                     </div>
                                     <div class="btns_container">
                                         <button class="cancel">Отмена</button>
-                                        <button class="save">Сохранить</button>
+                                        <button class="save" id="save_prices">Сохранить</button>
                                     </div>
                                     `;
 
@@ -455,8 +571,13 @@ async function renderAdminTable() {
                     event.target.style.color = 'rgb(0, 0, 0)'
                 }
             })
+
+        editPrices();
+
         })
     });
+
+    /*----конец блока конфигурации цен----*/
 
     for (let film of films) {
         let filmName = film.film_name;
@@ -491,7 +612,127 @@ async function renderAdminTable() {
 
     filmCards.forEach(card => {
         card.style.backgroundColor = randomizeColor()
-    })
+    });
     
+    const timeLines = document.querySelectorAll('div.timeline');
+
+    for (let hall of halls) {
+        hallName = hall.hall_name;
+        timeLines.forEach(timeline => {
+            if(+timeline.id === hall.id) {
+                timeline.insertAdjacentHTML('beforebegin', `<h2 class="timeline_title">${hallName}</h2>`)
+            }
+        })  
+    };
+
+/* Блок управления продажами */
+
+    const configSalesBtns = document.querySelectorAll('.sales-cfg');
+    const blockSales = document.querySelector('div.sales');
+
+    configSalesBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            configSalesBtns.forEach((selected) => {
+                selected.classList.remove('config_selected');
+                btn.classList.add('config_selected');
+            })
+            if (Array.from(configSalesBtns).some(btn => btn.classList.contains('config_selected'))) {
+                blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
+                const statusMsg = document.querySelector('div.sales_message');
+                    if (btn.getAttribute('opened') === '1') {
+                        statusMsg.innerHTML = `<p class="paragraph">Продажи билетов открыты!</p>
+                                                <button class="sales_manager" id="sales_manager">Приостановить продажу билетов</button>`
+                    }
+                    else {
+                        statusMsg.innerHTML = `<p class="paragraph">Продажи билетов закрыты.</p>
+                                                <button class="sales_manager" id="sales_manager">Открыть продажу билетов</button>`
+                    }
+            }
+
+            const salesManager = document.getElementById('sales_manager');
+            salesManager.addEventListener('click', () => {
+                if (btn.getAttribute('opened') === '0') {
+                    const params = new FormData()
+                    params.set('hallOpen', '1')
+                    fetch(`https://shfe-diplom.neto-server.ru/open/${+btn.id}`, {
+                            method: 'POST',
+                            body: params 
+                        })
+                        .then(response => response.json())
+                        .then(data => console.log(data));
+                }
+                else {
+                    const params = new FormData()
+                    params.set('hallOpen', '0')
+                    fetch(`https://shfe-diplom.neto-server.ru/open/${+btn.id}`, {
+                            method: 'POST',
+                            body: params 
+                        })
+                        .then(response => response.json())
+                        .then(data => console.log(data));
+                }
+            });
+        })
+    })
 };
 
+/*---- конец блока управления продажами ----*/
+
+function sendGrid() {
+
+    const arrayConfig = [];
+    let hallGridBlock = document.querySelector('div.hall_map');
+
+        if (hallGridBlock) {
+            const savePlacesGrid = document.getElementById('places_grid');
+
+            savePlacesGrid.addEventListener('click', () => {
+                const iterableRows = document.querySelectorAll('div.hall_row');
+                iterableRows.forEach(row => {
+                    const cells = row.querySelectorAll('div.cell');
+                    const rowArr = [];
+
+                    cells.forEach(cell => {
+                        rowArr.push(cell.getAttribute('status'));
+                    });
+        
+                    arrayConfig.push(rowArr)
+                });
+
+                const rowArea = document.getElementById('row');
+                const seatArea = document.getElementById('seat');
+                const currentHall = document.querySelector('.hall-cfg.config_selected');
+            
+                const params = new FormData()
+                    params.set('rowCount', `${rowArea.value}`)
+                    params.set('placeCount', `${seatArea.value}`)
+                    params.set('config', JSON.stringify(arrayConfig))
+                    fetch(`https://shfe-diplom.neto-server.ru/hall/${+currentHall.id}`, {
+                        method: 'POST',
+                        body: params 
+                    })
+                        .then( response => response.json())
+                        .then( data => console.log( data ));
+            
+                })  
+        };
+};
+
+function editPrices() {
+    const savePrices = document.getElementById('save_prices');
+    const currentHall = document.querySelector('.prices-cfg.config_selected');
+    const stdPrice = document.getElementById('standart-price');
+    const vipPrice = document.getElementById('vip-price');
+
+    savePrices.addEventListener('click', () => {
+        const params = new FormData()
+            params.set('priceStandart', `${+stdPrice.value}`)
+            params.set('priceVip', `${+vipPrice.value}`)
+            fetch(`https://shfe-diplom.neto-server.ru/price/${+currentHall.id}`, {
+                method: 'POST',
+                body: params 
+            })
+                .then( response => response.json())
+                .then( data => console.log( data ));
+    })
+};
