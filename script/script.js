@@ -233,21 +233,59 @@ async function showHall() {
             };
             })
 
-            function check(){
+            function check() {
                 const hallWindow = document.querySelector('div.hall_container');
+                const cells = document.querySelectorAll('div.cell');
+                let cost = 0;
+                let reservedCells = [];
+                cells.forEach(cell => {
+                    if (cell.classList.contains('cell_active')) {
+                        reservedCells.push(cell.id);
+                        cost += (+cell.getAttribute('price'));
+                    }
+                })
+
                 hallWindow.classList.add('hidden');
+
+                for (let hall of halls) {
+                    if (hall.id === +btn.id) {
+                        hallName = hall.hall_name;
+                    };
+                }
+
+                for (let film of films){
+                    if (selectedFilmId === film.id) {
+                        let filmName = film.film_name;
+
 
                 header.insertAdjacentHTML('afterend', `
                     <div class="check_header_container">
                         <h2 class="check_header">Вы выбрали билеты:</h2>
                     </div>
+                    <div class="check_main_container">
+                        <div class="check_main">
+                            <p class="paragraph">На фильм: <span class="boldered">${filmName}</span></p>
+                            <p class="paragraph">Места: <span class="boldered">${reservedCells}</span></p>
+                            <p class="paragraph">В зале: <span class="boldered">${hallName}</span></p>
+                            <p class="paragraph">Начало сеанса: <span class="boldered">${selectedSeance}</span></p>
+                            <p class="paragraph">Стоимость: <span class="boldered">${cost}</span> рублей</p>
+                        </div>
+                        <div class="get_code_container">
+                            <button class="get_code" id="get_code">Получить код бронирования</button>
+                        </div>
+                        <div class="attention">
+                            <p class="attention_paragraph">После оплаты билет будет доступен в этом окне, а также придёт вам на почту. Покажите QR-код нашему контроллёру у входа в зал.</p>
+                            <p class="attention_paragraph">Приятного просмотра!</p>
+                        </div>
+                    </div>
                 `)
-            }
-
+            }; 
+        }
+    }
             const book = document.querySelector('button.book');
             book.addEventListener('click', () => {
                 check();
-            })
+            });
         })
     })
 

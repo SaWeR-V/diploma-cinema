@@ -354,9 +354,8 @@ a {
     z-index: 1;
 }
 
-.new_hall_popup {
+.popup {
     background-color: rgba(234, 233, 235, 0.95);
-    height: 260px;
     position: relative;
     z-index: 2;
     display: flex;
@@ -365,7 +364,7 @@ a {
     align-items: center;
 }
 
-.new_hall_popup_header {
+.popup_header {
     padding: 16px 42px 14px 42px;
     background-color: rgba(99, 83, 108, 1);
     font-family: 'Roboto-bold', sans-serif;
@@ -391,7 +390,7 @@ a {
     transition: .2s;
 }
 
-.new_hall_popup_content {
+.popup_content {
     display: flex;
     flex-direction: column;
     font-family: 'Roboto', sans-serif;
@@ -406,7 +405,7 @@ a {
     color: rgba(132, 132, 132, 1);
 }
 
-.new_hall_popup_input {
+.popup_input {
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     color: rgba(117, 117, 117, 1);
@@ -415,7 +414,12 @@ a {
     border: 1px solid rgba(183, 183, 183, 1);
 }
 
-.new_hall_popup_input:focus {
+#new_film_description {
+    min-height: 80px;
+    resize: none;
+}
+
+.popup_input:focus {
     color: var(--color-black);
 }
 
@@ -423,6 +427,7 @@ a {
     display: flex;
     justify-content: center;
     gap: 14px;
+    padding-bottom: 30px;
 }
 
 .popup_btn {

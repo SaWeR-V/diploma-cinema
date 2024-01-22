@@ -120,14 +120,14 @@ async function renderAdminTable() {
         hallsHTML += `<li class="halls_list_item">${hallNames}<button class="remove_hall" id="${hallId}"></button></li>`;
         hallsCfgBtns += `<li class="config_btn hall-cfg" id="${hallId}">${hallNames}</li>`
         pricesCfgBtns += `<li class="config_btn prices-cfg" id="${hallId}">${hallNames}</li>`
-        hallTimelines += `<div class="timeline" id="${hallId}" ondrop="drop(event)" ondragover="allowDrop(event)"></div>`;
+        hallTimelines += `<div class="timeline" id="${hallId}"></div>`;
         salesCfgBtns += `<li class="config_btn sales-cfg" id="${hallId}" opened="${hallStatus}">${hallNames}</li>`
     }
 
     header.insertAdjacentHTML('afterend', `
         <main class="admin_table_container fade_in">
             <section class="hall_management_container">
-                <div class="section_header"><div class="stick-header-first"></div>
+                <div class="section_header">
                     <div class="heading">
                         <h2 class="menu_header">Управление залами</h2>
                         <button class="menu_toggle"></button>
@@ -142,7 +142,7 @@ async function renderAdminTable() {
                 </div>
             </section>
             <section class="hall_configuration">
-                <div class="section_header"><div class="stick"></div>
+                <div class="section_header">
                     <div class="heading">
                         <h2 class="menu_header">Конфигурация залов</h2>
                         <button class="menu_toggle"></button>
@@ -182,14 +182,14 @@ async function renderAdminTable() {
                 </div>
                 <div class="content_container">
                     <div class="block films">
-                        <button class="add_film">Добавить фильм</button>
+                        <button class="add_film" id="add_film">Добавить фильм</button>
                         <div class="films_collection"></div>
                         ${hallTimelines}
                     </div>
                 </div>
             </section>
             <section class="hall_configuration">
-                <div class="section_header"><div class="stick-header-last"></div>
+                <div class="section_header">
                     <div class="heading">
                         <h2 class="menu_header">Открыть продажи</h2>
                         <button class="menu_toggle"></button>
@@ -209,22 +209,22 @@ async function renderAdminTable() {
 
     /*---Конец блока формирования DOM---*/
 
-    /*   Блок ПопАпа   */
+    /*   Блок ПопАпа на добавление зала   */
 
     const createHall = document.querySelector('button.create_hall');
     createHall.addEventListener('click', () => {
         const main = document.querySelector('main.main_container');
         main.insertAdjacentHTML('afterbegin', `
             <div class="popup_container">
-                <div class="new_hall_popup">
-                    <div class="new_hall_popup_header">Добавление зала<div class="close_popup"></div></div>
-                    <label class="new_hall_popup_content">
+                <div class="popup">
+                    <div class="popup_header">Добавление зала<div class="close_popup"></div></div>
+                    <label class="popup_content">
                         <span class="popup_input_annot">Название зала</span>
-                        <input class="new_hall_popup_input" type="text" id="new_hall_popup_input" placeholder="Например, «Зал 1»">
+                        <input class="popup_input" type="text" id="new_hall_popup_input" placeholder="Например, «Зал 1»">
                     </label>
                     <div class="popup_btns_container">
                         <button class="popup_btn" id="add-hall">Добавить зал</button>
-                        <button class="popup_btn popup_cancel">Отмена</button>
+                        <button class="popup_btn popup_cancel">Отменить</button>
                     </div>
                 </div>
             </div>
@@ -261,6 +261,7 @@ async function renderAdminTable() {
                 hallsList.innerHTML += `<li class="halls_list_item">${hallNames}<button class="remove_hall" id="${hallId}"></button></li>`;
             }
 
+            console.log(hallsList)
             popupCont.remove()
         });
 
@@ -324,8 +325,16 @@ async function renderAdminTable() {
                     row = hall.hall_rows;
                     seat = hall.hall_places;
                 }
+            
+                if (hall.id === +btn.id) {
+                    for (let i = 0; i < hall.hall_config.length; i++) {
+                        hallCfg.push(...hall.hall_config[i]);
+                    }
+                }   
+                
+            };
 
-                hallPlaces += `<label class="annot_col">Рядов, шт
+            hallPlaces += `<label class="annot_col">Рядов, шт
                                     <input class="input" id="row" type="number" value="${row}" min="0">
                                 </label>
                                 <span class="multiplier">x</span>
@@ -333,116 +342,117 @@ async function renderAdminTable() {
                                     <input class="input" id="seat" type="number" value="${seat}" min="0">
                                 </label>
                                 `;
+
+            if (frame) {
+                if (!frame.querySelector('div.places_quantity')) {
+                    frame.insertAdjacentHTML('beforeend', `
+                        <div class="places_quantity">
+                            <p class="paragraph">Укажите количество рядов и максимальное количество кресел в ряду:</p>
+                            <div class="places_inputs">${hallPlaces}</div>
+                        </div>
+                        <div class="hall_map">
+                            <p class="paragraph">Теперь Вы можете указать типы кресел на схеме зала:</p>
+                            <div class="hall_map_legend">
+                                <span class="cell"></span>
+                                    <p class="legend_annotation"> — обычные кресла</p>
+                                <span class="cell vip"></span>
+                                    <p class="legend_annotation"> — VIP кресла </p>
+                                <span class="cell disabled"></span>
+                                    <p class="legend_annotation"> — заблокированные (нет кресла)</p>
+                            </div>
+                            <p class="legend_annotation">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
+                            <div class="map_container" id="map_container"></div>
+                            <div class="btns_container">
+                                <button class="cancel" id="hall_discard_changes">Отмена</button>
+                                <button class="save" id="places_grid">Сохранить</button>
+                            </div>
+                        </div>
+                        `)
+                };
+                        
+            const rowArea = document.getElementById('row');
+            const seatArea = document.getElementById('seat');
+
+            const mapContainer = document.getElementById('map_container');
             
-                   
-                if (frame) {
-                    if (!frame.querySelector('div.places_quantity')) {
-                        frame.insertAdjacentHTML('beforeend', `
-                            <div class="places_quantity">
-                                <p class="paragraph">Укажите количество рядов и максимальное количество кресел в ряду:</p>
-                                <div class="places_inputs">${hallPlaces}</div>
-                            </div>
-                            <div class="hall_map">
-                                <p class="paragraph">Теперь Вы можете указать типы кресел на схеме зала:</p>
-                                <div class="hall_map_legend">
-                                    <span class="cell"></span>
-                                        <p class="legend_annotation"> — обычные кресла</p>
-                                    <span class="cell vip"></span>
-                                        <p class="legend_annotation"> — VIP кресла </p>
-                                    <span class="cell disabled"></span>
-                                        <p class="legend_annotation"> — заблокированные (нет кресла)</p>
-                                </div>
-                                <p class="legend_annotation">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
-                                <div class="map_container" id="map_container"></div>
-                                <div class="btns_container">
-                                    <button class="cancel">Отмена</button>
-                                    <button class="save" id="places_grid">Сохранить</button>
-                                </div>
-                            </div>
-                            `)
-                    };
-                            
-                const rowArea = document.getElementById('row');
-                const seatArea = document.getElementById('seat');
+            mapContainer.innerHTML = `<div class="places_container" id="places_container"></div>`;
 
-                const mapContainer = document.getElementById('map_container');
+            function drawHallGrid() {
+
+            if (rowArea && seatArea) {
+                rowArea.value = row;
+                seatArea.value = seat;
                 
-                mapContainer.innerHTML = `<div class="places_container" id="places_container"></div>`;
+                const placesContainer = document.getElementById('places_container');
 
-                if (rowArea && seatArea) {
-                    rowArea.value = row;
-                    seatArea.value = seat;
-                    
-                    const placesContainer = document.getElementById('places_container');
+                placesContainer.innerHTML = '';
 
-                    for (let i = 0; i < rowArea.value; i++) {
-                            const rowContainer = document.createElement('div');
-                            rowContainer.className = 'hall_row';
-                                
-                        for (let k = 0; k < seatArea.value; k++) {
-                            const seat = document.createElement('div');
-                            seat.className = 'cell';
-                            rowContainer.appendChild(seat);
-                            }
+                for (let i = 0; i < rowArea.value; i++) {
+                        const rowContainer = document.createElement('div');
+                        rowContainer.className = 'hall_row';
+                            
+                    for (let k = 0; k < seatArea.value; k++) {
+                        const seat = document.createElement('div');
+                        seat.className = 'cell';
+                        rowContainer.appendChild(seat);
+                        }
 
-                        placesContainer.appendChild(rowContainer);
-                    }
+                    placesContainer.appendChild(rowContainer);
+                }
 
-                    if (placesContainer) {
-                        const cells = document.querySelectorAll('div.cell');
-                        let currentStatusIndex = 0;
-                    
-                        for (let cellIndex = 0; cellIndex < cells.length; cellIndex++) {
-                            const cell = cells[cellIndex];
-                            const initStatus = hallCfg[cellIndex]; 
-                            cell.setAttribute('status', initStatus);
-                    
-                            const statuses = ['standart', 'vip', 'disabled'];
-                    
-                            cell.addEventListener('click', () => {
-                                const newStatus = statuses[currentStatusIndex];
-                                cell.setAttribute('status', newStatus); 
-                                currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
-                    
-                                cell.classList.remove(...statuses);
-                                cell.classList.add(newStatus);
-                            });
-                    
-                            if (initStatus === 'standart') {
-                                cell.classList.add('standart');
-                            } else if (initStatus === 'vip') {
-                                cell.classList.add('vip');
-                            } else {
-                                cell.classList.add('disabled');
-                            }
+                if (placesContainer) {
+                    const cells = document.querySelectorAll('div.cell');
+                    let currentStatusIndex = 0;
+                
+                    for (let cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+                        const cell = cells[cellIndex];
+                        const initStatus = hallCfg[cellIndex]; 
+                        cell.setAttribute('status', initStatus);
+                
+                        const statuses = ['standart', 'vip', 'disabled'];
+                
+                        cell.addEventListener('click', () => {
+                            const newStatus = statuses[currentStatusIndex];
+                            cell.setAttribute('status', newStatus); 
+                            currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
+                
+                            cell.classList.remove(...statuses);
+                            cell.classList.add(newStatus);
+                        });
+                
+                        if (initStatus === 'standart') {
+                            cell.classList.add('standart');
+                        } else if (initStatus === 'vip') {
+                            cell.classList.add('vip');
+                        } else {
+                            cell.classList.add('disabled');
                         }
                     }
                 }
-                    
-                if (rowArea) {
-                    rowArea.addEventListener('input', (event) => {
-                        const newRowValue = event.target.value;
-                        row = newRowValue;
-                        updatePlacesContainer(row, seat);
-                    });
-                }
-
-                if (seatArea) {
-                    seatArea.addEventListener('input', (event) => {
-                        const newSeatValue = event.target.value;
-                        seat = newSeatValue;
-                        updatePlacesContainer(row, seat);
-                    });
-                }
-
-                }
-
-                if (hall.id === +btn.id) {
-                    for (let i = 0; i < hall.hall_config.length; i++) {
-                        hallCfg.push(...hall.hall_config[i]);
-                    }
-                }
+            }
             };
+        
+            drawHallGrid();
+            
+            if (rowArea) {
+                rowArea.addEventListener('input', (event) => {
+                    const newRowValue = event.target.value;
+                    row = newRowValue;
+                    updatePlacesContainer(row, seat);
+                });
+            }
+
+            if (seatArea) {
+                seatArea.addEventListener('input', (event) => {
+                    const newSeatValue = event.target.value;
+                    seat = newSeatValue;
+                    updatePlacesContainer(row, seat);
+                });
+            }
+
+            }
+
+            
 
             function updatePlacesContainer(newRow, newSeat) {
                 const placesContainer = document.getElementById('places_container');
@@ -492,6 +502,10 @@ async function renderAdminTable() {
 
             sendGrid();
 
+            const discardChangesHall = document.getElementById('hall_discard_changes');
+            discardChangesHall.addEventListener('click', () => {
+                drawHallGrid();
+            })
         })
     });
 
@@ -543,7 +557,7 @@ async function renderAdminTable() {
                                         </label> 
                                     </div>
                                     <div class="btns_container">
-                                        <button class="cancel">Отмена</button>
+                                        <button class="cancel" id="discard_changes_prices">Отмена</button>
                                         <button class="save" id="save_prices">Сохранить</button>
                                     </div>
                                     `;
@@ -554,6 +568,12 @@ async function renderAdminTable() {
             let standartPrice = document.getElementById('standart-price');
             let vipPrice = document.getElementById('vip-price');
 
+
+            const discardChangesPrices = document.getElementById('discard_changes_prices');
+            discardChangesPrices.addEventListener('click', () => {
+                    standartPrice.value = standart;
+                    vipPrice.value = vip;
+            })
 
             standartPrice.addEventListener('input', (event) => {
                 if (event.target.value <= 0) {
@@ -579,13 +599,15 @@ async function renderAdminTable() {
 
     /*----конец блока конфигурации цен----*/
 
+    /*   Блок конфигурации сеансов   */
+
     for (let film of films) {
         let filmName = film.film_name;
         let filmId = film.id;
         let filmPoster = film.film_poster;
         let filmDuration = film.film_duration;
 
-        filmsCollection += `<div class="film_card" id="${filmId}" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)">
+        filmsCollection += `<div class="film_card" id="${filmId}" draggable="true"">
                                 <img class="poster" src="${filmPoster}">    
                                 <div class="film_info">
                                     <h4 class="film_name">${filmName}</h4>
@@ -625,30 +647,118 @@ async function renderAdminTable() {
         })  
     };
 
+/*   Блок поп-ап добавления фильма   */
+    const addFilm = document.getElementById('add_film');
+    addFilm.addEventListener('click', () => {
+        const main = document.querySelector('main.main_container');
+        main.insertAdjacentHTML('afterbegin', `
+            <div class="popup_container">
+                <div class="popup">
+                    <div class="popup_header">Добавление фильма<div class="close_popup"></div></div>
+                    <label class="popup_content">
+                        <span class="popup_input_annot">Название фильма</span>
+                        <input class="popup_input" type="text" id="new_film_title" placeholder="Например, «Гражданин Кейн»">
+
+                        <span class="popup_input_annot">Продолжительность фильма (мин.)</span>
+                        <input class="popup_input" type="number" id="new_film_duration" min="0">
+
+                        <span class="popup_input_annot">Описание фильма</span>
+                        <textarea class="popup_input" type="text" id="new_film_description" spellcheck="false"></textarea>
+
+                        <span class="popup_input_annot">Страна</span>
+                        <input class="popup_input" type="text" id="new_film_origin">
+                    </label>
+                    <div class="popup_btns_container">
+                        <button class="popup_btn" id="add-film">Добавить фильм</button>
+                        <button class="popup_btn" id="upload-poster">Загрузить постер
+                            <input class="hidden" type="file" id="file-uploader">
+                        </button>
+                        <button class="popup_btn popup_cancel">Отменить</button>
+                    </div>
+                </div>
+            </div>`
+        )
+        const closePopup = document.querySelector('div.close_popup');
+        const cancel = document.querySelector('button.popup_cancel');
+        const newFilmTitle = document.getElementById('new_film_title');
+        const newFilmDuration = document.getElementById('new_film_duration');
+        const newFilmDescription = document.getElementById('new_film_description');
+        const newFilmOrigin = document.getElementById('new_film_origin');
+        const addFilmBtn = document.getElementById('add-film');
+        const uploadPoster = document.getElementById('upload-poster');
+        const fileUploader = document.getElementById('file-uploader');
+
+        const popupCont = document.querySelector('div.popup_container');
+
+        [closePopup, cancel].forEach(elem => {
+            elem.addEventListener('click', () => {
+                popupCont.remove()
+            })
+        });
+
+
+        uploadPoster.addEventListener('click', () => {
+            fileUploader.click()
+        })
+
+        addFilmBtn.addEventListener('click', () => {
+            const params = new FormData()
+            params.set('filmName', `${newFilmTitle.value}`)
+            params.set('filmDuration', `${+newFilmDuration.value}`)
+            params.set('filmDescription', `${newFilmDescription.value}`)
+            params.set('filmOrigin', `${newFilmOrigin.value}`)
+            params.set('filePoster', `${fileUploader.files[0]}`)
+
+
+            // console.log(fileUploader.files[0])
+            fetch('https://shfe-diplom.neto-server.ru/film', {
+                method: 'POST',
+                body: params 
+            })
+            .then( response => response.json())
+            .then( data => console.log( data ));
+    
+        })
+        
+        });
+
+        
+        
+        
+
+
+/*   конец блока поп-ап добавления фильма   */
+
+/*----конец блока конфигурации сеансов----*/
+
+
 /* Блок управления продажами */
 
     const configSalesBtns = document.querySelectorAll('.sales-cfg');
     const blockSales = document.querySelector('div.sales');
+    let statusMsg = document.querySelector('div.sales_message');
 
     configSalesBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             configSalesBtns.forEach((selected) => {
                 selected.classList.remove('config_selected');
                 btn.classList.add('config_selected');
-            })
-            if (Array.from(configSalesBtns).some(btn => btn.classList.contains('config_selected'))) {
-                blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
-                const statusMsg = document.querySelector('div.sales_message');
-                    if (btn.getAttribute('opened') === '1') {
-                        statusMsg.innerHTML = `<p class="paragraph">Продажи билетов открыты!</p>
-                                                <button class="sales_manager" id="sales_manager">Приостановить продажу билетов</button>`
-                    }
-                    else {
-                        statusMsg.innerHTML = `<p class="paragraph">Продажи билетов закрыты.</p>
-                                                <button class="sales_manager" id="sales_manager">Открыть продажу билетов</button>`
-                    }
-            }
+            });
 
+            if (Array.from(configSalesBtns).some(btn => btn.classList.contains('config_selected'))) {
+                if (!statusMsg) {
+                    blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
+                    statusMsg = document.querySelector('div.sales_message');
+                }
+                if (btn.getAttribute('opened') === '1') {
+                    statusMsg.innerHTML = `<p class="paragraph">Продажи билетов открыты!</p>
+                                            <button class="sales_manager" id="sales_manager">Приостановить продажу билетов</button>`
+                }
+                else {
+                    statusMsg.innerHTML = `<p class="paragraph">Продажи билетов закрыты.</p>
+                                            <button class="sales_manager" id="sales_manager">Открыть продажу билетов</button>`
+                }
+            }
             const salesManager = document.getElementById('sales_manager');
             salesManager.addEventListener('click', () => {
                 if (btn.getAttribute('opened') === '0') {
