@@ -179,6 +179,7 @@ async function showHall() {
                 for (let i = 0; i < hall.hall_rows; i++) {
                     const rowContainer = document.createElement('div');
                     rowContainer.className = 'row';
+                    rowContainer.id = (i + 1);
                     
                     for (let k = 0; k < hall.hall_places; k++) {
                         const seat = document.createElement('div');
@@ -236,8 +237,19 @@ async function showHall() {
             function check() {
                 const hallWindow = document.querySelector('div.hall_container');
                 const cells = document.querySelectorAll('div.cell');
+                const rows = document.querySelectorAll('div.row');
+                let rowId = [];
                 let cost = 0;
                 let reservedCells = [];
+                let dateOfSeance = document.querySelector('li.selected').innerText.trim();
+                
+                
+                rows.forEach(row => {
+                    if (row.querySelector('div.cell_active')){
+                        rowId.push(row.id)
+                    }
+                })
+
                 cells.forEach(cell => {
                     if (cell.classList.contains('cell_active')) {
                         reservedCells.push(cell.id);
@@ -253,7 +265,7 @@ async function showHall() {
                     };
                 }
 
-                for (let film of films){
+                for (let film of films) {
                     if (selectedFilmId === film.id) {
                         let filmName = film.film_name;
 
@@ -279,6 +291,28 @@ async function showHall() {
                         </div>
                     </div>
                 `)
+                
+            let qrResult = QRCreator(`Дата: ${dateOfSeance},
+                                    Время: ${selectedSeance}, 
+                                    Название фильма: ${filmName}, 
+                                    Зал: ${hallName}, 
+                                    Ряд: ${rowId}, 
+                                    Место: ${reservedCells}, 
+                                    Стоимость: ${cost}.
+                                    Билет действителен строго на свой сеанс.`
+                    , {image: 'svg'});
+
+            let qrContainer = document.createElement('div');
+            qrContainer.className = 'qr_container';
+            qrContainer.appendChild(qrResult.result)
+
+            const getCode = document.querySelector('button.get_code');
+            const attentionParargaphs = document.querySelectorAll('.attention_paragraph');
+
+            getCode.addEventListener('click', () => {
+                getCode.replaceWith(qrContainer);
+                attentionParargaphs[0].innerText = 'Покажите QR-код нашему контроллеру для подтверждения бронирования.';
+            })
             }; 
         }
     }

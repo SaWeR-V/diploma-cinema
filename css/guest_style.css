@@ -571,6 +571,10 @@ h3 {
     line-height: 16px;
 }
 
+.qr_container {
+    width: 200px;
+}
+
 .hidden {
     display: none;
 }
