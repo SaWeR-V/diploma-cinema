@@ -1,108 +1,28 @@
-const form = document.getElementById('signin_form');
-const signIn = document.getElementById('signin_btn');
-const login = document.getElementById('login');
-const pass = document.getElementById('password');
-const message = document.getElementById('auth_message');
-const authFrames = document.getElementById('auth_frames');
-const header = document.getElementById('header');
+import login from "./modules/login.js";
+// import { createDom } from "./modules/dom_creator.js";
+login();
 
+const header = document.getElementById('header');
 let halls = null;
 let films = null;
 let seances = null;
 
-let logout = null;
-let authKeys;
 
-form.addEventListener('input', () => {
-    authKeys = {
-        login: login.value,
-        password: pass.value
-    }
-});
-
-async function authorize() {
-    const response = await fetch('https://shfe-diplom.neto-server.ru/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            },
-        body: JSON.stringify(authKeys),
-    });
-    const answer = await response.json()
-    
-    if (answer.success === true) {
-        localStorage.setItem('authData', JSON.stringify(authKeys));
-
-        login.value = null;
-        pass.value = null; 
-
-        message.classList.remove('hidden');
-        authFrames.replaceWith(message);
-        document.title = 'Идём в кино: управление';
-        message.innerHTML = `Добро пожаловать, <b>${authKeys.login}</b>!`;
-
-        form.classList.add('smooth_out');
-        setTimeout(() => {
-            form.remove();
-            header.insertAdjacentHTML('beforeend', `
-                <button class="sign_out fade_in" id="logout">Выйти</button>
-            `);
-            renderAdminTable();
-            logout = document.getElementById('logout');
-            logout.addEventListener('click', () => {
-                localStorage.clear()
-            });
-        }, 3600);
-    }
-
-    else {
-        login.value = null;
-        pass.value = null; 
-
-        message.classList.remove('hidden');
-        message.innerHTML = answer.error;
-    }
-};
-
-signIn.addEventListener('click', (e) => {
-    e.preventDefault();
-    authorize();
-});
-
-if (localStorage.getItem('authData') !== null) {
-    form.remove();
-    document.title = 'Идём в кино: управление';
-
-    header.insertAdjacentHTML('beforeend', `
-                <button class="sign_out fade_in" id="logout">Выйти</button>
-            `);
-    logout = document.getElementById('logout');
-    logout.addEventListener('click', () => {
-        localStorage.clear()
-    });
-
-    renderAdminTable();
-};
-
-
-async function getData() {
+export async function getData() {
     const response = await fetch('https://shfe-diplom.neto-server.ru/alldata');
     const data = await response.json();
     return data.result;
 };
 
-async function identify() {
+export async function identify() {
     const dataArr = await getData();
         halls = dataArr.halls;
         films = dataArr.films;
         seances = dataArr.seances;
     };
 
-async function renderAdminTable() {
+export async function renderAdminTable() {
     await identify();
-
-    /*   Блок формирования DOM   */
-
 
     let hallsHTML = '';
     let hallsCfgBtns = '';
@@ -110,23 +30,29 @@ async function renderAdminTable() {
     let filmsCollection = '';
     let hallTimelines = '';
     let salesCfgBtns = '';
+    let hallsOptions = '';
+    let filmsOptions = '';
 
 
-    for (let hall of halls){
+    const main = document.querySelector('main.main_container');
+
+
+    for (let hall of halls) {
         let hallNames = hall.hall_name;
         let hallId = hall.id;
         let hallStatus = hall.hall_open;
 
-        hallsHTML += `<li class="halls_list_item">${hallNames}<button class="remove_hall" id="${hallId}"></button></li>`;
+        hallsHTML += `<li class="halls_list_item">${hallNames}<button class="remove hall" id="${hallId}"></button></li>`;
         hallsCfgBtns += `<li class="config_btn hall-cfg" id="${hallId}">${hallNames}</li>`
         pricesCfgBtns += `<li class="config_btn prices-cfg" id="${hallId}">${hallNames}</li>`
-        hallTimelines += `<div class="timeline" id="${hallId}"></div>`;
+        hallTimelines += `<div class="timeline_block"><div class="timeline" id="${hallId}"></div></div>`;
         salesCfgBtns += `<li class="config_btn sales-cfg" id="${hallId}" opened="${hallStatus}">${hallNames}</li>`
+        hallsOptions += `<option class="hall_option">${hallNames}</option>`;
     }
 
     header.insertAdjacentHTML('afterend', `
         <main class="admin_table_container fade_in">
-            <section class="hall_management_container">
+            <section class="hall_configuration">
                 <div class="section_header">
                     <div class="heading">
                         <h2 class="menu_header">Управление залами</h2>
@@ -140,72 +66,78 @@ async function renderAdminTable() {
                     </ul>
                     <button class="create_hall">Создать зал</button>
                 </div>
-            </section>
-            <section class="hall_configuration">
-                <div class="section_header">
-                    <div class="heading">
-                        <h2 class="menu_header">Конфигурация залов</h2>
-                        <button class="menu_toggle"></button>
+                </section>
+                <section class="hall_configuration">
+                    <div class="section_header">
+                        <div class="heading">
+                            <h2 class="menu_header">Конфигурация залов</h2>
+                            <button class="menu_toggle"></button>
+                        </div>
                     </div>
-                </div>
-                <div class="content_container">
-                    <div class="block halls">
-                        <p class="paragraph">Выберите зал для конфигурации:</p>
-                        <ul class="config_list">
-                            ${hallsCfgBtns}
-                        </ul>
+                    <div class="content_container">
+                        <div class="block halls">
+                            <p class="paragraph">Выберите зал для конфигурации:</p>
+                            <ul class="config_list">
+                                ${hallsCfgBtns}
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </section>
-            <section class="hall_configuration">
-                <div class="section_header">
-                    <div class="heading">
-                        <h2 class="menu_header">Конфигурация цен</h2>
-                        <button class="menu_toggle"></button>
+                </section>
+                <section class="hall_configuration">
+                    <div class="section_header">
+                        <div class="heading">
+                            <h2 class="menu_header">Конфигурация цен</h2>
+                            <button class="menu_toggle"></button>
+                        </div>
                     </div>
-                </div>
-                <div class="content_container">
-                    <div class="block prices">
-                        <p class="paragraph">Выберите зал для конфигурации:</p>
-                        <ul class="config_list">
-                            ${pricesCfgBtns}
-                        </ul>
+                    <div class="content_container">
+                        <div class="block prices">
+                            <p class="paragraph">Выберите зал для конфигурации:</p>
+                            <ul class="config_list">
+                                ${pricesCfgBtns}
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </section>
-            <section class="hall_configuration">
-                <div class="section_header">
-                    <div class="heading">
-                        <h2 class="menu_header">Сетка сеансов</h2>
-                        <button class="menu_toggle"></button>
+                </section>
+                <section class="hall_configuration">
+                    <div class="section_header">
+                        <div class="heading">
+                            <h2 class="menu_header">Сетка сеансов</h2>
+                            <button class="menu_toggle"></button>
+                        </div>
                     </div>
-                </div>
-                <div class="content_container">
-                    <div class="block films">
-                        <button class="add_film" id="add_film">Добавить фильм</button>
-                        <div class="films_collection"></div>
-                        ${hallTimelines}
+                    <div class="content_container">
+                        <div class="block films">
+                            <button class="add_film" id="add_film">Добавить фильм</button>
+                            <div class="dragndrop_area">
+                                <div class="films_collection"></div>
+                                <div class="timelines_container">
+                                    ${hallTimelines}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </section>
-            <section class="hall_configuration">
-                <div class="section_header">
-                    <div class="heading">
-                        <h2 class="menu_header">Открыть продажи</h2>
-                        <button class="menu_toggle"></button>
+                </section>
+                <section class="hall_configuration">
+                    <div class="section_header">
+                        <div class="heading">
+                            <h2 class="menu_header">Открыть продажи</h2>
+                            <button class="menu_toggle"></button>
+                        </div>
                     </div>
-                </div>
-                <div class="content_container">
-                    <div class="block sales">
-                        <p class="paragraph">Выберите зал для открытия/закрытия продаж:</p>
-                        <ul class="config_list">
-                            ${salesCfgBtns}
-                        </ul>
+                    <div class="content_container">
+                        <div class="block sales">
+                            <p class="paragraph">Выберите зал для открытия/закрытия продаж:</p>
+                            <ul class="config_list">
+                                ${salesCfgBtns}
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </section>
-        </main>
+                </section>
+            </main>
     `);
+    /*   Блок формирования DOM   */
+
 
     /*---Конец блока формирования DOM---*/
 
@@ -213,9 +145,8 @@ async function renderAdminTable() {
 
     const createHall = document.querySelector('button.create_hall');
     createHall.addEventListener('click', () => {
-        const main = document.querySelector('main.main_container');
         main.insertAdjacentHTML('afterbegin', `
-            <div class="popup_container">
+            <div class="popup_container fade_in">
                 <div class="popup">
                     <div class="popup_header">Добавление зала<div class="close_popup"></div></div>
                     <label class="popup_content">
@@ -254,15 +185,14 @@ async function renderAdminTable() {
 
             const hallsList = document.getElementById('hallsList');
             hallsList.innerHTML = '';
-        
+
+            popupCont.remove();
+
             for (let hall of halls) {
                 let hallNames = hall.hall_name;
                 let hallId = hall.id;
-                hallsList.innerHTML += `<li class="halls_list_item">${hallNames}<button class="remove_hall" id="${hallId}"></button></li>`;
-            }
-
-            console.log(hallsList)
-            popupCont.remove()
+                hallsList.innerHTML += `<li class="halls_list_item">${hallNames}<button class="remove hall" id="${hallId}"></button></li>`;
+            } 
         });
 
     });
@@ -271,7 +201,7 @@ async function renderAdminTable() {
 
     /*   Назначение действий для кнопок (скрытие секций, удаление залов)   */
 
-    const removeHallBtns = document.querySelectorAll('button.remove_hall');
+    const removeHallBtns = document.querySelectorAll('button.remove.hall');
 
     removeHallBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -450,7 +380,7 @@ async function renderAdminTable() {
                 });
             }
 
-            }
+            
 
             
 
@@ -506,7 +436,9 @@ async function renderAdminTable() {
             discardChangesHall.addEventListener('click', () => {
                 drawHallGrid();
             })
+        }
         })
+        
     });
 
 
@@ -537,11 +469,11 @@ async function renderAdminTable() {
             }
 
             for (let hall of halls) {
+                let standart = hall.hall_price_standart;
+                let vip = hall.hall_price_vip;
                 
-                if (hall.id === +btn.id) {
-                    standart = hall.hall_price_standart;
-                    vip = hall.hall_price_vip;
 
+                if (hall.id === +btn.id) {
 
                     inputsContainer.innerHTML = `<p class="paragraph">Установите цены для типов кресел:</p>
                                     <div class="price_cont">
@@ -562,8 +494,9 @@ async function renderAdminTable() {
                                     </div>
                                     `;
 
-                }
+                
             }
+        }
 
             let standartPrice = document.getElementById('standart-price');
             let vipPrice = document.getElementById('vip-price');
@@ -601,23 +534,27 @@ async function renderAdminTable() {
 
     /*   Блок конфигурации сеансов   */
 
+    
+
     for (let film of films) {
         let filmName = film.film_name;
         let filmId = film.id;
         let filmPoster = film.film_poster;
         let filmDuration = film.film_duration;
 
-        filmsCollection += `<div class="film_card" id="${filmId}" draggable="true"">
+        filmsCollection += `<div class="film_card" id="${filmId}">
                                 <img class="poster" src="${filmPoster}">    
                                 <div class="film_info">
                                     <h4 class="film_name">${filmName}</h4>
                                     <div class="card_control">
-                                        <p>${filmDuration} минут</p>
-                                        <button class="remove_hall" id="${filmId}"></button>
+                                        <p><span>${filmDuration}</span> минут</p>
+                                        <button class="remove film" id="${filmId}"></button>
                                     </div>
                                 </div>
                             </div>
                             `;
+
+        filmsOptions += `<option class="film_option">${filmName}</option>`;
     }
     
     const avilableFilms = document.querySelector('.films_collection');
@@ -628,51 +565,201 @@ async function renderAdminTable() {
     function randomizeColor() {
         const randomIndex = Math.floor(Math.random() * colors.length);
         return colors[randomIndex]
-    }
+    };
 
     const filmCards = document.querySelectorAll('div.film_card');
 
     filmCards.forEach(card => {
-        card.style.backgroundColor = randomizeColor()
+        card.style.backgroundColor = randomizeColor();
+
+        card.draggable = true;
+        card.querySelector('img').draggable = false;
+
+        card.addEventListener(`dragstart`, (event) => {
+            event.dataTransfer.setData('filmName', card.querySelector('.film_name').textContent);
+            event.dataTransfer.setData('filmDuration', card.querySelector('span').textContent);
+            event.dataTransfer.setData('cardColor', card.style.backgroundColor);
+
+            event.dataTransfer.setDragImage(event.target.querySelector('img'), 18, 25);
+        })
     });
     
     const timeLines = document.querySelectorAll('div.timeline');
 
     for (let hall of halls) {
-        hallName = hall.hall_name;
         timeLines.forEach(timeline => {
-            if(+timeline.id === hall.id) {
-                timeline.insertAdjacentHTML('beforebegin', `<h2 class="timeline_title">${hallName}</h2>`)
+            if (+timeline.id === hall.id) {
+                timeline.insertAdjacentHTML('beforebegin', `<h2 class="timeline_title">${hall.hall_name}</h2>`)
+                timeline.insertAdjacentHTML('afterend', `<div class="footnotes" id="${timeline.id}"></div>`);
             }
+
+            let currentHall;
+            
+            timeline.ondragover = allowDrop;
+
+            function allowDrop(event) {
+                event.preventDefault()
+            };
+
+            timeline.ondrop = drop;
+
+            function drop(event) {
+                currentHall = timeline.previousElementSibling.textContent;
+                
+                let filmName = event.dataTransfer.getData('filmName');
+                let filmDuration = event.dataTransfer.getData('filmDuration');
+                let cardColor = event.dataTransfer.getData('cardColor');
+
+                main.insertAdjacentHTML('afterbegin', `
+                    <div class="popup_container fade_in">
+                        <div class="popup">
+                            <div class="popup_header">Добавление сеанса<div class="close_popup"></div></div>
+                                <form class="new_seance_params">
+                                    <label class="annot_col">Название зала
+                                        <div class="options">
+                                            <select class="seance_input" name="hallName">
+                                                ${hallsOptions}
+                                            </select>
+                                        </div>
+                                    </label>
+                                    <label class="annot_col">Название фильма
+                                        <div class="options">
+                                            <select class="seance_input" name="filmName">
+                                                ${filmsOptions}
+                                            </select>
+                                        </div>
+                                    </label>
+                                    <label class="annot_col">Время начала
+                                        <input class="seance_input time" value="00:00" type="time">
+                                    </label>
+                                </form>
+                            <div class="popup_btns_container">
+                                <button class="popup_btn" id="add-seance">Добавить фильм</button>
+                                <button class="popup_btn popup_cancel">Отменить</button>
+                            </div>
+                        </div>
+                    </div>`
+                )
+
+                const optionsHalls = document.querySelectorAll('.hall_option');
+                optionsHalls.forEach(option => {
+                    if (option.textContent === currentHall) {
+                        option.selected = true
+                    }
+                })
+
+                const optionFilm = document.querySelectorAll('.film_option');
+                optionFilm.forEach(option => {
+                    if (option.textContent === filmName) {
+                        option.selected = true
+                    }
+                })
+            
+                function createTimelineTick() {
+                    const tick = document.createElement('div');
+                    tick.className = 'timeline_tick';
+                    tick.innerHTML = `${filmName}`;
+
+                    timeline.appendChild(tick);
+
+                    const time = document.querySelector('.time').value;
+                    let timeSet = {
+                        hours : +time.split(':')[0],
+                        minutes : +time.split(':')[1],
+                    }
+
+                    let totalMinutes = 60 * 24;
+                    let minuteInPercent = (totalMinutes / 100);
+                    let calculatedWidth = ((+filmDuration) / minuteInPercent).toFixed(2);
+                    let calculatedOffset = ((timeSet.hours * 60 + timeSet.minutes) / minuteInPercent).toFixed(2);
+                    
+
+                    let ticksArr = timeline.querySelectorAll('.timeline_tick');
+                    let ticksWidthSum = 0;
+
+                    
+                    ticksArr.forEach(elem => {
+                        ticksWidthSum += (+elem.style.width.split('%')[0])
+                    })
+
+
+                    tick.style.width += calculatedWidth + '%';
+                    tick.style.backgroundColor += cardColor;
+
+                    const footnoteBlocks = document.querySelectorAll('.footnotes');
+                    footnoteBlocks.forEach(block => {
+                        if (+timeline.id === +block.id) {
+                            let calculatedLeft = (calculatedOffset - ticksWidthSum);
+                            tick.style.left = calculatedLeft + '%';
+                            block.innerHTML += `<div class="time_footnote">${time}</div>`;
+                        }
+
+                        let timeFootnotes = block.querySelectorAll('.time_footnote');
+                        let elemWidthAcc = 0;
+
+                        timeFootnotes.forEach(elem => {                            
+                            if (timeFootnotes[0] !== elem) {
+                                    elemWidthAcc += +(elem.offsetWidth / (timeline.offsetWidth / 100)).toFixed(2);
+                                    console.log(elemWidthAcc)
+                                    elem.style.left += (calculatedOffset - elemWidthAcc) + '%';
+                            }
+                            else {
+                                elem.style.left += calculatedOffset + '%';
+                            }
+                        })
+                    })
+                };
+    
+
+                const closePopup = document.querySelector('div.close_popup');
+                const cancel = document.querySelector('button.popup_cancel');
+                const popupCont = document.querySelector('div.popup_container');
+                const addSeance = document.getElementById('add-seance');
+
+                [closePopup, cancel].forEach(elem => {
+                    elem.addEventListener('click', () => {
+                        popupCont.remove()
+                    })
+                });
+
+                addSeance.addEventListener('click', () => {
+                    createTimelineTick();
+                    popupCont.remove()
+                })
+            };
         })  
     };
 
 /*   Блок поп-ап добавления фильма   */
     const addFilm = document.getElementById('add_film');
     addFilm.addEventListener('click', () => {
-        const main = document.querySelector('main.main_container');
         main.insertAdjacentHTML('afterbegin', `
-            <div class="popup_container">
+            <div class="popup_container fade_in">
                 <div class="popup">
                     <div class="popup_header">Добавление фильма<div class="close_popup"></div></div>
-                    <label class="popup_content">
-                        <span class="popup_input_annot">Название фильма</span>
-                        <input class="popup_input" type="text" id="new_film_title" placeholder="Например, «Гражданин Кейн»">
-
-                        <span class="popup_input_annot">Продолжительность фильма (мин.)</span>
-                        <input class="popup_input" type="number" id="new_film_duration" min="0">
-
-                        <span class="popup_input_annot">Описание фильма</span>
-                        <textarea class="popup_input" type="text" id="new_film_description" spellcheck="false"></textarea>
-
-                        <span class="popup_input_annot">Страна</span>
-                        <input class="popup_input" type="text" id="new_film_origin">
-                    </label>
+                    <form id="new_film_params">
+                        <label class="popup_content">
+                            <span class="popup_input_annot">Название фильма</span>
+                            <input class="popup_input" name="filmName" type="text" placeholder="Например, «Гражданин Кейн»">
+                        </label>
+                        <label class="popup_content">
+                            <span class="popup_input_annot">Продолжительность фильма (мин.)</span>
+                            <input class="popup_input" name="filmDuration" type="number" min="0">
+                        </label>
+                            <label class="popup_content">
+                            <span class="popup_input_annot">Описание фильма</span>
+                            <textarea class="popup_input" name="filmDescription" type="text" spellcheck="false"></textarea>
+                        </label>
+                        <label class="popup_content">
+                            <span class="popup_input_annot">Страна</span>
+                            <input class="popup_input" name="filmOrigin" type="text">
+                        </label>
+                            <input class="hidden" name="filePoster" type="file" id="file-uploader">
+                    </form>
                     <div class="popup_btns_container">
                         <button class="popup_btn" id="add-film">Добавить фильм</button>
-                        <button class="popup_btn" id="upload-poster">Загрузить постер
-                            <input class="hidden" type="file" id="file-uploader">
-                        </button>
+                            <button class="popup_btn" id="upload-poster">Загрузить постер
+                            </button>
                         <button class="popup_btn popup_cancel">Отменить</button>
                     </div>
                 </div>
@@ -680,14 +767,10 @@ async function renderAdminTable() {
         )
         const closePopup = document.querySelector('div.close_popup');
         const cancel = document.querySelector('button.popup_cancel');
-        const newFilmTitle = document.getElementById('new_film_title');
-        const newFilmDuration = document.getElementById('new_film_duration');
-        const newFilmDescription = document.getElementById('new_film_description');
-        const newFilmOrigin = document.getElementById('new_film_origin');
+        const newFilmParams = document.getElementById('new_film_params')
         const addFilmBtn = document.getElementById('add-film');
         const uploadPoster = document.getElementById('upload-poster');
         const fileUploader = document.getElementById('file-uploader');
-
         const popupCont = document.querySelector('div.popup_container');
 
         [closePopup, cancel].forEach(elem => {
@@ -699,18 +782,10 @@ async function renderAdminTable() {
 
         uploadPoster.addEventListener('click', () => {
             fileUploader.click()
-        })
+        });
 
         addFilmBtn.addEventListener('click', () => {
-            const params = new FormData()
-            params.set('filmName', `${newFilmTitle.value}`)
-            params.set('filmDuration', `${+newFilmDuration.value}`)
-            params.set('filmDescription', `${newFilmDescription.value}`)
-            params.set('filmOrigin', `${newFilmOrigin.value}`)
-            params.set('filePoster', `${fileUploader.files[0]}`)
-
-
-            // console.log(fileUploader.files[0])
+            const params = new FormData(newFilmParams)
             fetch('https://shfe-diplom.neto-server.ru/film', {
                 method: 'POST',
                 body: params 
@@ -718,7 +793,7 @@ async function renderAdminTable() {
             .then( response => response.json())
             .then( data => console.log( data ));
     
-        })
+        });
         
         });
 
@@ -728,6 +803,21 @@ async function renderAdminTable() {
 
 
 /*   конец блока поп-ап добавления фильма   */
+
+/* УДАЛЕНИЕ ФИЛЬМА */
+
+const deleteFilm = document.querySelectorAll('button.remove.film');
+deleteFilm.forEach(btn => {
+    btn.addEventListener('click', () => {
+        fetch(`https://shfe-diplom.neto-server.ru/film/${+btn.id}`, {
+            method: 'DELETE',
+            })
+            .then( response => response.json())
+            .then( data => console.log( data ));
+    });
+})
+
+/* -------------------- */
 
 /*----конец блока конфигурации сеансов----*/
 

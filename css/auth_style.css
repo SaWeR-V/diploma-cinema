@@ -51,7 +51,7 @@ a {
     line-height: 39px;
     font-weight: 900;
     display: flex;
-    width: 216px;
+    width: 220px;
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -199,13 +199,8 @@ a {
 .admin_table_container {
     z-index: 1;
     background-color: rgba(234, 233, 235, 0.95);
-    width: 962px;
-    display: flex;
-    flex-direction: column;
-}
-
-.hall_management_container {
-    width: 962px;
+    max-width: 962px;
+    width: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -215,7 +210,7 @@ a {
     position: relative;
     display: block;
     height: 44px;
-    width: 44px;
+    min-width: 44px;
     border: 4px solid rgba(188, 149, 214, 1);
     background-color: rgba(255, 255, 255, 1);
     border-radius: 50%;
@@ -223,7 +218,8 @@ a {
 }
 
 .section_header {
-    width: 875px;
+    max-width: 875px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     background-color: rgba(99, 83, 108, 1);
@@ -269,7 +265,8 @@ a {
 
 .heading {
     display: flex;
-    width: 790px;
+    max-width: 790px;
+    width: 100%;
     justify-content: space-between;
     align-items: center;
 }
@@ -375,6 +372,7 @@ a {
     text-transform: uppercase;
     display: flex;
     width: -webkit-fill-available;
+    width: -moz-available;
     justify-content: space-between;
 }
 
@@ -417,6 +415,13 @@ a {
 #new_film_description {
     min-height: 80px;
     resize: none;
+}
+
+#new_film_params {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    width: 100%;
 }
 
 .popup_input:focus {
@@ -474,7 +479,7 @@ a {
     text-transform: uppercase;
 }
 
-.remove_hall::before {
+.remove::before {
     content: '';
     display: block;
     background-image: url('../images/trash.png');
@@ -487,7 +492,7 @@ a {
     margin-right: auto;
 }
 
-.remove_hall {
+.remove {
     border-radius: 3px;
     background: rgba(255, 255, 255, 1);
     border: none;
@@ -498,12 +503,12 @@ a {
     padding: 0;
 }
 
-.remove_hall:hover {
+.remove:hover {
     cursor: pointer;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.24);
 }
 
-.remove_hall:active {
+.remove:active {
     scale: 0.9;
 }
 
@@ -517,8 +522,8 @@ a {
     list-style-type: none;
     padding: 0;
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
-    height: 45.3px;
 }
 
 .config_btn {
@@ -759,11 +764,11 @@ a {
 }
 
 .films_collection {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); 
-    grid-template-rows: repeat(2, auto);
+    display: flex;
+    flex-wrap: wrap;
     gap: 15px;
-    width: 790px;
+    max-width: 792px;
+    width: 100%;
 }
 
 .card_control {
@@ -772,7 +777,7 @@ a {
 }
 
 .film_card {
-    width: 259px;
+    width: 252px;
     border: 1px solid rgba(0, 0, 0, 0.3);
     display: flex;
 }
@@ -780,6 +785,53 @@ a {
 .poster {
     width: 38px;
     height: 50px;
+}
+
+.new_seance_params {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 752px;
+    width: 100%;
+}
+
+.seance_input {
+    padding: 8px 12px 8px 12px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 19.2px;
+    font-weight: 400;
+    -webkit-appearance: none;
+    appearance: none;
+    width: -webkit-fill-available;
+    width: -moz-fill-available;
+    border: none;
+    outline: none;
+}
+
+.options {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgb(183, 183, 183);
+    background-color: var(--color-white);
+}
+
+.options::after {
+    content: '';
+    background-image: url('../svg/arrow_dn_options.png');
+    background-size: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: block;
+    position: relative;
+    width: 15px;
+    height: 17px;
+    right: 15px;
+    pointer-events: none;
+}
+
+.time {
+    border: 1px solid rgb(183, 183, 183);
 }
 
 .film_name {
@@ -793,9 +845,8 @@ a {
     display: flex;
     flex-direction: column;
     width: 210px;
-    justify-content: flex-end;
+    justify-content: space-around;
     padding-left: 10px;
-    gap: 10px;
 }
 
 .timeline_title {
@@ -808,7 +859,38 @@ a {
 
 .timeline {
     border: 1px solid #848484;
-    padding: 0px 711px 0px 0px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    overflow: hidden;
+}
+
+.timeline_tick {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    text-align: center;
+    height: 36px;
+    overflow: hidden;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    line-height: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.footnotes {
+    display: flex;
+    margin-top: 5px;
+}
+
+.time_footnote {
+    position: relative;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    line-height: 14px;
+    width: 30px;
+    color: rgba(132, 132, 132, 1);
 }
 
 .sales_message {

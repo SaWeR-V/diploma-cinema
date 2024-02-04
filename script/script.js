@@ -303,7 +303,7 @@ async function showHall() {
                     , {image: 'svg'});
 
             let qrContainer = document.createElement('div');
-            qrContainer.className = 'qr_container';
+            qrContainer.className = 'qr_container fade_in';
             qrContainer.appendChild(qrResult.result)
 
             const getCode = document.querySelector('button.get_code');
