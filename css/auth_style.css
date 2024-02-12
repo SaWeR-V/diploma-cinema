@@ -36,7 +36,7 @@ a {
     z-index: 1;
     max-width: 962px;
     width: 100%;
-    padding: 14px;
+    padding: 14px 0 14px 0;
     top: 1px;
     display: flex;
     justify-content: space-between;
@@ -70,9 +70,9 @@ a {
 }
 
 .main_container {
-    background-image: url('../images/1670472484.jpg');
+    background-image: url(../images/1670472484.jpg);
     background-size: cover;
-    background-position: center;
+    background-position: 75%;
     background-repeat: no-repeat;
     position: relative;
     display: flex;
@@ -205,7 +205,7 @@ a {
     flex-direction: column;
 }
 
-.section_header::before {
+.heading::before {
     content: '';
     position: relative;
     display: block;
@@ -215,11 +215,18 @@ a {
     background-color: rgba(255, 255, 255, 1);
     border-radius: 50%;
     z-index: 1;
+    right: 86px;
+}
+
+.section_header::before {
+    content: '';
+    border: 1px solid rgba(188, 149, 214, 1);
+    flex-grow: 1;
+    width: 139px;
+    transform: rotateZ(90deg);
 }
 
 .section_header {
-    max-width: 875px;
-    width: 100%;
     display: flex;
     justify-content: space-between;
     background-color: rgba(99, 83, 108, 1);
@@ -261,6 +268,7 @@ a {
     text-transform: uppercase;
     font-size: 22px;
     line-height: 25px;
+    flex-grow: 1;
 }
 
 .heading {
@@ -524,6 +532,7 @@ a {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
+    min-height: 45.3px;
 }
 
 .config_btn {
@@ -616,7 +625,7 @@ a {
 }
 
 .cell {
-    width: 26px;
+    min-width: 26px;
     height: 26px;
     border: 1px solid rgba(57, 57, 57, 1);
     background-color: rgba(196, 196, 196, 1);
@@ -849,6 +858,23 @@ a {
     padding-left: 10px;
 }
 
+.timelines_mgmt {
+    display: flex;
+    align-items: center;
+}
+
+.trash_bin {
+    background-image: url('../images/trash_bin.png');
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 30px;
+    height: 30px;
+}
+
+.timelines_container {
+    flex-grow: 1;
+}
+
 .timeline_title {
     font-family: 'Roboto-bold', sans-serif;
     font-size: 16px;
@@ -863,6 +889,8 @@ a {
     align-items: center;
     height: 50px;
     overflow: hidden;
+    box-sizing: border-box;
+    min-width: 100%;
 }
 
 .timeline_tick {
@@ -882,6 +910,18 @@ a {
 .footnotes {
     display: flex;
     margin-top: 5px;
+    height: 14px;
+}
+
+.time_footnote::before {
+    content: '';
+    display: block;
+    height: 5px;
+    width: 1px;
+    border-left: 1px solid rgba(132, 132, 132, 1);
+    position: relative;
+    top: -5px;
+    margin-inline: auto;
 }
 
 .time_footnote {
