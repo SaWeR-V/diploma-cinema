@@ -34,7 +34,7 @@ a {
 .header_container {
     position: relative;
     z-index: 1;
-    max-width: 962px;
+    max-width: 850px;
     width: 100%;
     padding: 14px 0 14px 0;
     top: 1px;
@@ -861,6 +861,7 @@ a {
 .timelines_mgmt {
     display: flex;
     align-items: center;
+    margin-top: 50px;
 }
 
 .trash_bin {
@@ -869,10 +870,22 @@ a {
     background-repeat: no-repeat;
     width: 30px;
     height: 30px;
+    position: absolute;
 }
 
 .timelines_container {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.timeline_block {
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+    width: 100%;
 }
 
 .timeline_title {
@@ -890,7 +903,8 @@ a {
     height: 50px;
     overflow: hidden;
     box-sizing: border-box;
-    min-width: 100%;
+    max-width: 720px;
+    width: 100%;
 }
 
 .timeline_tick {
@@ -910,7 +924,6 @@ a {
 .footnotes {
     display: flex;
     margin-top: 5px;
-    height: 14px;
 }
 
 .time_footnote::before {

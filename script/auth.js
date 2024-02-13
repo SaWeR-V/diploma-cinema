@@ -1,5 +1,7 @@
 import login from "./modules/login.js";
 import { sendGrid } from "./modules/sendGrid.js";
+import { addSeances } from "./modules/addSeances.js";
+
 // import { createDom } from "./modules/dom_creator.js";
 login();
 
@@ -10,7 +12,7 @@ let halls = null;
 let films = null;
 let seances = null;
 
-let draggedFilmName;
+let draggedFilmId;
 let draggedFilmDuration;
 let draggedCardColor;
 
@@ -118,7 +120,6 @@ export async function renderAdminTable() {
                     <div class="content_container">
                         <div class="block films">
                             <button class="add_film" id="add_film">Добавить фильм</button>
-                            <form class="dragndrop_area">
                                 <div class="films_collection"></div>
                                 <div class="timelines_mgmt">
                                     <div class="trash_bin hidden"></div>
@@ -126,7 +127,10 @@ export async function renderAdminTable() {
                                         ${hallTimelines}
                                     </div>
                                 </div>
-                            </form>
+                        </div>
+                        <div class="btns_container">
+                            <button class="cancel" id="timelines_discard_changes">Отмена</button>
+                            <button class="save" id="timelines_save">Сохранить</button>
                         </div>
                     </div>
                 </section>
@@ -570,7 +574,7 @@ export async function renderAdminTable() {
     const avilableFilms = document.querySelector('.films_collection');
     avilableFilms.innerHTML = filmsCollection;
 
-    const filmCards = document.querySelectorAll('div.film_card');
+    const filmCards = document.querySelectorAll('.film_card');
     filmCards.forEach(card => {
         card.style.backgroundColor = randomizeColor();
 
@@ -578,11 +582,14 @@ export async function renderAdminTable() {
         card.querySelector('img').draggable = false;
 
         card.addEventListener(`dragstart`, (event) => {
-            draggedFilmName = event.dataTransfer.setData('filmName', card.querySelector('.film_name').textContent);
+            event.dataTransfer.setData('filmName', card.querySelector('.film_name').textContent);
+            draggedFilmId = +event.target.id;
             draggedFilmDuration = card.querySelector('span').textContent;
             draggedCardColor = card.style.backgroundColor;
 
             event.dataTransfer.setDragImage(event.target.querySelector('img'), 18, 25);
+
+            console.log(draggedFilmId)
         })
     })
 
@@ -672,6 +679,8 @@ export async function renderAdminTable() {
             .then( data => console.log( data ));
     
         });
+
+
         
 });
 
@@ -752,6 +761,9 @@ deleteFilm.forEach(btn => {
             });
         })
     })
+
+    const timelinesSave = document.getElementById('timelines_save');
+    timelinesSave.onclick = addSeances;
 };
 
 /*---- конец блока управления продажами ----*/
@@ -852,7 +864,7 @@ function getSeances() {
         const timelineSeances = seances.filter(seance => +timeline.id === seance.seance_hallid);
         timelineSeances.forEach(seance => {
             const film = films.find(film => seance.seance_filmid === film.id);
-                    timeline.innerHTML += `<div class="timeline_tick" id="${film.id}" duration="${film.film_duration}" seance_time="${seance.seance_time}">${film.film_name}</div>`;
+                    timeline.innerHTML += `<div class="timeline_tick" id="${film.id}" duration="${film.film_duration}" seance_time="${seance.seance_time}" seance_id="${seance.id}">${film.film_name}</div>`;
                 })
                 
                 const timelineTicks = timeline.querySelectorAll('.timeline_tick');
@@ -873,19 +885,16 @@ function getSeances() {
                     tick.style.width = calculatedWidth + '%';
                     tick.style.left = calculatedOffset + '%';
                             
-                            
-                    const ticksArr = timeline.querySelectorAll('.timeline_tick');
-                            
-                    let ticksWidthSum = 0;
 
-                    setOffsets();
 
                     const footnoteBlocks = document.querySelectorAll('.footnotes');
                     footnoteBlocks.forEach(block => {
                         if (+timeline.id === +block.id) {
                             block.innerHTML += `<div class="time_footnote" id="${tick.id}">${seanceTime}</div>`;
                         }
-        
+
+                        setOffsets();
+
                         let timeFootnotes = block.querySelectorAll('.time_footnote');
                         let elemWidthAcc = 0;
         
@@ -916,32 +925,33 @@ function setOffsets() {
     timelines.forEach(timeline => {
         let ticksWidthSum = 0;
         let ticks = timeline.querySelectorAll('.timeline_tick');
-            ticks.forEach(tick => {
-                const filmDuration = tick.getAttribute('duration');
-                const seanceTime = tick.getAttribute('seance_time');
-                            
-                const timeSet = {
-                    hours : +seanceTime.split(':')[0],
-                    minutes : +seanceTime.split(':')[1],
-                };
+        ticks.forEach(tick => {
+            
+            const seanceTime = tick.getAttribute('seance_time');         
+            const timeSet = {
+                hours : +seanceTime.split(':')[0],
+                minutes : +seanceTime.split(':')[1],
+            };
 
-                let totalMinutes = 60 * 24;
-                let minuteInPercent = totalMinutes / 100;
-                let calculatedWidth = (+filmDuration / minuteInPercent).toFixed(2);
-                let calculatedOffset = (timeSet.hours * 60 + timeSet.minutes) / minuteInPercent.toFixed(2);
-                if(ticks[0] !== tick) {
-                    tick.style.left = (calculatedOffset - ticksWidthSum) + '%';
-                    ticksWidthSum += (+tick.style.width.split('%')[0]);
-                }
-                else if (ticks.length >= 2) {
-                    tick.style.left = (calculatedOffset - ticksWidthSum) + '%';
-                    ticksWidthSum += (+ticks[1].previousElementSibling.style.width.split('%')[0]);
-                }
-                else {
-                    tick.style.left = calculatedOffset + '%';
-                }
-            })
+            let totalMinutes = 60 * 24;
+            let minuteInPercent = totalMinutes / 100;
+
+            let calculatedOffset = (timeSet.hours * 60 + timeSet.minutes) / minuteInPercent.toFixed(2);
+            if(ticks[0] !== tick) {
+                tick.style.left = (calculatedOffset - ticksWidthSum) + '%';
+                ticksWidthSum += (+tick.style.width.split('%')[0]);
+            }
+            else if (ticks.length >= 2) {
+                tick.style.left = (calculatedOffset - ticksWidthSum) + '%';
+                ticksWidthSum += (+ticks[1].previousElementSibling.style.width.split('%')[0]);
+            }
+            else {
+                tick.style.left = calculatedOffset + '%';
+            }
+
         })
+    })
+            
 };
 
 
@@ -952,21 +962,31 @@ function createTimelineTick(event) {
 
     let currentTimeline = event.target;
 
+    const filmCards = document.querySelectorAll('.film_card');
     let timelines = document.querySelectorAll('.timeline');
     for (let timeline of timelines) {
 
         const optionFilm = document.querySelectorAll('.film_option');
         const time = document.querySelector('.time').value;
 
+        
+
         const tick = document.createElement('div');
         tick.className = 'timeline_tick';
         tick.setAttribute('seance_time', time)
+        tick.id = draggedFilmId;
+        
 
         optionFilm.forEach(option => {
             if (option.selected){
                 tick.innerHTML = `${option.textContent}`;
             }
         });
+
+        if (isSeanceExsists(currentTimeline, time)) {
+            alert('Тик уже существует в этом времени!');
+            return;
+        }
 
         currentTimeline.appendChild(tick);
 
@@ -1035,24 +1055,44 @@ function deleteSeance() {
     const garbage = document.querySelector('.trash_bin');
 
     timeLines.forEach(timeline => {
+
         const ticks = timeline.querySelectorAll('.timeline_tick');
         ticks.forEach(tick => {
             let seanceTime = tick.getAttribute('seance_time');
             tick.draggable = true;
-
+            
             tick.addEventListener('dragstart', (event) => {
                 timeline.ondrop = null;
                 garbage.classList.remove('hidden')
+
             })
+
+            tick.addEventListener('dragend', (event) => {
+                let otherTimeline = event.target;
+                console.log(currentTimeline)
+                
+                if(otherTimeline) {
+                    
+                }
+            })
+
 
             tick.ondragend = function (event) {
                 event.target.remove()
+                const seanceId = event.target.getAttribute('seance_id');
+
+                fetch(`https://shfe-diplom.neto-server.ru/seance/${seanceId}`, {
+                            method: 'DELETE',
+                        })
+                        .then( response => response.json())
+                        .then( data => console.log( data ));
+
                 footnotes.forEach(elem => {
                     if (seanceTime === elem.textContent && elem.id === tick.id) {
                         elem.remove()
                     }
                 })
-
+            garbage.classList.add('hidden')
             setOffsets();
             timeline.ondrop = drop;
 
@@ -1061,6 +1101,16 @@ function deleteSeance() {
         
     })
 };
+
+function isSeanceExsists(timeline, time) {
+    let ticks = timeline.querySelectorAll('.timeline_tick');
+    for (let tick of ticks) {
+        if (tick.getAttribute('seance_time') === time) {
+            return true;
+        }
+    }
+    return false;
+}
 
 function randomizeColor() {
     const colors = ['#CAFF85', '#85FF89', '#85FFD3', '#85E2FF', '#8599FF'];
