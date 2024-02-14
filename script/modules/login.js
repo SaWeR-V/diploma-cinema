@@ -48,6 +48,22 @@ async function authorize() {
             logout = document.getElementById('logout');
             logout.addEventListener('click', () => {
                 localStorage.clear()
+                
+                const mainFrame = document.querySelector('.admin_table_container');
+
+                let logoutMessage = document.createElement('div');
+                logoutMessage.className = 'login_form fade_in';
+                logoutMessage.innerHTML = `<div class="auth_header_bkg">
+                                                <header class="auth_header">Логаут</header>
+                                           </div>
+                                           <div class="auth_container">
+                                                <div class="auth_message out fade_in">До новых встреч!</div>
+                                           </div>
+                                        `;
+                mainFrame.replaceWith(logoutMessage);
+                logoutMessage.classList.add('smooth_out');
+
+                setTimeout(() => location.reload(), 3000)
             });
         }, 3600);
     }

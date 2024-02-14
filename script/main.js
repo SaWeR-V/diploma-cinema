@@ -4,7 +4,7 @@ import { addSeances } from "./modules/addSeances.js";
 import { editPrices } from "./modules/editPrices.js";
 
 // import { createDom } from "./modules/dom_creator.js";
-login();
+// login();
 
 const header = document.getElementById('header');
 const main = document.querySelector('.main_container');
