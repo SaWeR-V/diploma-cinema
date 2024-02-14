@@ -1,31 +1,37 @@
 export function addSeances() {
     let timelines = document.querySelectorAll('.timeline');
-    let tickId;
-    let seanceTime;
-    let timelineId;
+    let seanceArr = []
     
 
     timelines.forEach(timeline => {
         let ticks = timeline.querySelectorAll('.timeline_tick');
         ticks.forEach(tick => {
-            seanceTime = tick.getAttribute('seance_time');
-            tickId = +tick.id;
+            let arr = {
+                seanceHallid : +tick.closest('.timeline').id,
+                seanceFilmid : +tick.id,
+                seanceTime : tick.getAttribute('seance_time'),
+            };
             
-            timelineId = +tick.closest('.timeline').id
-            console.log(timelineId)
-            
+            seanceArr.push(arr)
         })
     });
     
-    const params = new FormData()
-    params.set('seanceHallid', `${timelineId}`)
-    params.set('seanceFilmid', `${tickId}`)
-    params.set('seanceTime', `${seanceTime}`)
-    fetch('https://shfe-diplom.neto-server.ru/seance', {
-        method: 'POST',
-        body: params 
-    })
+    for (let params of seanceArr) {
+        let seanceHallid = params.seanceHallid;
+        let seanceFilmid = params.seanceFilmid;
+        let seanceTime = params.seanceTime;
 
-    .then( response => response.json())
-    .then( data => console.log( data ));    
+    
+        const values = new FormData()
+        values.set('seanceHallid', `${seanceHallid}`)
+        values.set('seanceFilmid', `${seanceFilmid}`)
+        values.set('seanceTime', `${seanceTime}`)
+        fetch('https://shfe-diplom.neto-server.ru/seance', {
+            method: 'POST',
+            body: values
+        })
+
+        .then( response => response.json())
+        .then( data => console.log( data )); 
+    }
 };

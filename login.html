@@ -15,27 +15,29 @@
             </a>
         </header>
         <form action="https://shfe-diplom.neto-server.ru/" id="signin_form" class="form">
-            <div class="auth_header_bkg">
-                <header class="auth_header">Авторизация</header>
-            </div>
-            <div class="auth_container">
-                <div id="auth_frames">
-                    <div class="row"> E-mail
-                        <input type="email" name="login" class="control" placeholder="example@domain.xyz" id="login">
-                    </div>
-                    <div class="row"> Пароль
-                        <input type="password" name="password" class="control" id="password">
-                    </div>
-                    <div class="row">
-                        <div class="btn_auth_cont">
-                            <button class="btn_auth" id="signin_btn">Авторизоваться</button>
+            <div class="login_form">
+                <div class="auth_header_bkg">
+                    <header class="auth_header">Авторизация</header>
+                </div>
+                <div class="auth_container">
+                    <div id="auth_frames">
+                        <div class="row"> E-mail
+                            <input type="email" name="login" class="control" placeholder="example@domain.xyz" id="login">
+                        </div>
+                        <div class="row"> Пароль
+                            <input type="password" name="password" class="control" id="password">
+                        </div>
+                        <div class="row">
+                            <div class="btn_auth_cont">
+                                <button class="btn_auth" id="signin_btn">Авторизоваться</button>
+                            </div>
                         </div>
                     </div>
+                        <div class="auth_message fade_in hidden" id="auth_message"></div>
                 </div>
-                    <div class="auth_message fade_in hidden" id="auth_message"></div>
             </div>
         </form>
     </main>
 </body>
-<script type="module" src="./script/auth.js"></script>
+<script type="module" src="./script/main.js"></script>
 </html>

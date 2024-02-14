@@ -215,22 +215,41 @@ a {
     background-color: rgba(255, 255, 255, 1);
     border-radius: 50%;
     z-index: 1;
-    right: 86px;
+    margin-right: 25px;
 }
 
 .section_header::before {
     content: '';
-    border: 1px solid rgba(188, 149, 214, 1);
-    flex-grow: 1;
-    width: 139px;
-    transform: rotateZ(90deg);
+    position: relative;
+    border-left: 1px solid rgba(188, 149, 214, 1);
+    height: 100%;
+    left: 26px;
+}
+
+.first::before {
+    content: '';
+    position: relative;
+    border-left: 1px solid rgba(188, 149, 214, 1);
+    height: 50%;
+    top: 25%;
+    left: 26px;
+}
+
+.last::before {
+    content: '';
+    position: relative;
+    border-left: 1px solid rgba(188, 149, 214, 1);
+    height: 50%;
+    top: -25%;
+    left: 26px;
 }
 
 .section_header {
     display: flex;
     justify-content: space-between;
     background-color: rgba(99, 83, 108, 1);
-    padding: 35px 42px 35px 45px;
+    padding: 0 45px 0 45px;
+    height: 95px;
     align-items: center;
 }
 
@@ -273,7 +292,7 @@ a {
 
 .heading {
     display: flex;
-    max-width: 790px;
+    max-width: 871px;
     width: 100%;
     justify-content: space-between;
     align-items: center;
@@ -296,8 +315,26 @@ a {
     transition: .3s ease-out; 
 }
 
-.content_container {
-    padding: 35px 42px 35px 128px;
+.container::before {
+    content: '';
+    border-left: 1px solid rgba(188, 149, 214, 1);
+    height: 100%;
+    display: block;
+    position: absolute;
+}
+
+.container {
+    border-left: 1px solid rgba(188, 149, 214, 1);
+    position: relative;
+    padding: 0px 0px 0 70px;
+}
+
+.last_container::before {
+    border: none;
+}
+
+.content {
+    padding: 35px 45px 35px 50px;
 }
 
 .halls_list {
@@ -642,12 +679,16 @@ a {
     background: none;
 }
 
-.legend_annotation {
+.legend_annotation, .hint {
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
     font-size: 14px;
     line-height: 16px;
     color: rgba(132, 132, 132, 1);
+}
+
+.hint {
+    content: 'Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши';
 }
 
 .map_container {
@@ -921,6 +962,16 @@ a {
     position: relative;
 }
 
+.tick_new {
+    border: 1px solid goldenrod;
+    outline: 2px solid gold;
+    animation-name: Lighting;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    /* box-shadow: 0 0 15px goldenrod; */
+}
+
 .footnotes {
     display: flex;
     margin-top: 5px;
@@ -1036,5 +1087,102 @@ a {
     100% {
         opacity: 0;
         scale: 1.1;
+    }
+}
+
+@keyframes Lighting {
+    0% {
+        box-shadow: 0 0 0px goldenrod;
+    }
+    100% {
+        box-shadow: 0 0 15px 5px goldenrod;
+    }
+}
+
+@media (max-width: 768px) {
+    .header_container {
+        max-width: 768px;
+        width: 95%;
+        padding: 14px;
+    }
+    
+    .login_form {
+        max-width: 480px;
+        width: 100%;
+    }
+
+    .content {
+        max-width: 768px;
+    }
+}
+
+@media (max-width: 390px) {
+    .header_container {
+        max-width: 390px;
+        width: 100%;
+        padding: 15px 0;
+        gap: 20px;
+        flex-direction: column;
+    }
+
+    .first::before, .section_header::before, .container::before, .last_container::before {
+        content: none;
+    }
+
+    .heading::before {
+        height: 22px;
+        min-width: 22px;
+        margin-right: 15px;
+    }
+
+    .section_header {
+        padding: 0px 20px 0 20px;
+    }
+
+    .container {
+        padding: 0;
+        border: none;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .places_quantity {
+        width: 330px;
+    }
+
+    .config_list {
+        min-height: -webkit-fill-available;
+        min-height: -moz-fill-available;
+    }
+
+    .hall_map_legend {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: normal;
+    }
+
+    .hint {
+        content: 'Чтобы изменить вид кресла, нажмите по нему';
+    }
+
+    .prices {
+        gap: 15px;
+    }
+
+    .films {
+        gap: 36px;
+    }
+
+    .timelines_mgmt {
+        margin: 0;
+    }
+    
+    .timelines_container {
+        gap: 8px;
     }
 }

@@ -1,6 +1,7 @@
 import login from "./modules/login.js";
 import { sendGrid } from "./modules/sendGrid.js";
 import { addSeances } from "./modules/addSeances.js";
+import { editPrices } from "./modules/editPrices.js";
 
 // import { createDom } from "./modules/dom_creator.js";
 login();
@@ -47,7 +48,6 @@ export async function renderAdminTable() {
     
 
 
-
     for (let hall of halls) {
         let hallNames = hall.hall_name;
         let hallId = hall.id;
@@ -64,18 +64,20 @@ export async function renderAdminTable() {
     header.insertAdjacentHTML('afterend', `
         <main class="admin_table_container fade_in">
             <section class="hall_configuration">
-                <div class="section_header">
+                <div class="section_header first">
                     <div class="heading">
                         <h2 class="menu_header">Управление залами</h2>
                         <button class="menu_toggle"></button>
                     </div>
                 </div>
-                <div class="content_container">
-                    <ul class="halls_list" id="hallsList">
-                        <p class="paragraph">Доступные залы:</p>
-                        ${hallsHTML}
-                    </ul>
-                    <button class="create_hall">Создать зал</button>
+                <div class="container">
+                    <div class="content">
+                        <ul class="halls_list" id="hallsList">
+                            <p class="paragraph">Доступные залы:</p>
+                            ${hallsHTML}
+                        </ul>
+                        <button class="create_hall">Создать зал</button>
+                    </div>
                 </div>
                 </section>
                 <section class="hall_configuration">
@@ -85,12 +87,14 @@ export async function renderAdminTable() {
                             <button class="menu_toggle"></button>
                         </div>
                     </div>
-                    <div class="content_container">
-                        <div class="block halls">
-                            <p class="paragraph">Выберите зал для конфигурации:</p>
-                            <ul class="config_list">
-                                ${hallsCfgBtns}
-                            </ul>
+                    <div class="container">
+                        <div class="content">
+                            <div class="block halls">
+                                <p class="paragraph">Выберите зал для конфигурации:</p>
+                                <ul class="config_list">
+                                    ${hallsCfgBtns}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -101,12 +105,14 @@ export async function renderAdminTable() {
                             <button class="menu_toggle"></button>
                         </div>
                     </div>
-                    <div class="content_container">
-                        <div class="block prices">
-                            <p class="paragraph">Выберите зал для конфигурации:</p>
-                            <ul class="config_list">
-                                ${pricesCfgBtns}
-                            </ul>
+                    <div class="container">
+                        <div class="content">
+                            <div class="block prices">
+                                <p class="paragraph">Выберите зал для конфигурации:</p>
+                                <ul class="config_list">
+                                    ${pricesCfgBtns}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -117,41 +123,46 @@ export async function renderAdminTable() {
                             <button class="menu_toggle"></button>
                         </div>
                     </div>
-                    <div class="content_container">
-                        <div class="block films">
-                            <button class="add_film" id="add_film">Добавить фильм</button>
-                                <div class="films_collection"></div>
-                                <div class="timelines_mgmt">
-                                    <div class="trash_bin hidden"></div>
-                                    <div class="timelines_container">
-                                        ${hallTimelines}
+                    <div class="container">
+                        <div class="content">
+                            <div class="block films">
+                                <button class="add_film" id="add_film">Добавить фильм</button>
+                                    <div class="films_collection"></div>
+                                    <div class="timelines_mgmt">
+                                        <div class="trash_bin hidden"></div>
+                                        <div class="timelines_container">
+                                            ${hallTimelines}
+                                        </div>
                                     </div>
-                                </div>
-                        </div>
-                        <div class="btns_container">
-                            <button class="cancel" id="timelines_discard_changes">Отмена</button>
-                            <button class="save" id="timelines_save">Сохранить</button>
+                            </div>
+                            <div class="btns_container">
+                                <button class="cancel" id="timelines_discard_changes">Отмена</button>
+                                <button class="save" id="timelines_save">Сохранить</button>
+                            </div>
                         </div>
                     </div>
                 </section>
                 <section class="hall_configuration">
-                    <div class="section_header">
+                    <div class="section_header last">
                         <div class="heading">
                             <h2 class="menu_header">Открыть продажи</h2>
                             <button class="menu_toggle"></button>
                         </div>
                     </div>
-                    <div class="content_container">
-                        <div class="block sales">
-                            <p class="paragraph">Выберите зал для открытия/закрытия продаж:</p>
-                            <ul class="config_list">
-                                ${salesCfgBtns}
-                            </ul>
+                    <div class="container last_container">
+                        <div class="content">
+                            <div class="block sales">
+                                <p class="paragraph">Выберите зал для открытия/закрытия продаж:</p>
+                                <ul class="config_list">
+                                    ${salesCfgBtns}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </section>
             </main>
     `);
+
     /*   Блок формирования DOM   */
 
 
@@ -306,7 +317,7 @@ export async function renderAdminTable() {
                                 <span class="cell disabled"></span>
                                     <p class="legend_annotation"> — заблокированные (нет кресла)</p>
                             </div>
-                            <p class="legend_annotation">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
+                            <p class="hint">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
                             <div class="map_container" id="map_container"></div>
                             <div class="btns_container">
                                 <button class="cancel" id="hall_discard_changes">Отмена</button>
@@ -588,8 +599,6 @@ export async function renderAdminTable() {
             draggedCardColor = card.style.backgroundColor;
 
             event.dataTransfer.setDragImage(event.target.querySelector('img'), 18, 25);
-
-            console.log(draggedFilmId)
         })
     })
 
@@ -764,30 +773,24 @@ deleteFilm.forEach(btn => {
 
     const timelinesSave = document.getElementById('timelines_save');
     timelinesSave.onclick = addSeances;
+
+    const timelinesDiscard = document.getElementById('timelines_discard_changes');
+    timelinesDiscard.onclick = () => {
+        const timelines = document.querySelectorAll('.timeline');
+        timelines.forEach(timeline => {timeline.innerHTML = ''});
+
+        const footnotes = document.querySelectorAll('.footnotes');
+        footnotes.forEach(footnote => footnote.innerHTML = '');
+
+        getSeances();
+    }
 };
 
 /*---- конец блока управления продажами ----*/
 
 
 
-function editPrices() {
-    const savePrices = document.getElementById('save_prices');
-    const currentHall = document.querySelector('.prices-cfg.config_selected');
-    const stdPrice = document.getElementById('standart-price');
-    const vipPrice = document.getElementById('vip-price');
 
-    savePrices.addEventListener('click', () => {
-        const params = new FormData()
-            params.set('priceStandart', `${+stdPrice.value}`)
-            params.set('priceVip', `${+vipPrice.value}`)
-            fetch(`https://shfe-diplom.neto-server.ru/price/${+currentHall.id}`, {
-                method: 'POST',
-                body: params 
-            })
-                .then( response => response.json())
-                .then( data => console.log( data ));
-    })
-};
 
 function drop(event) {
     let currentHall = event.target.previousElementSibling.textContent;;
@@ -962,7 +965,7 @@ function createTimelineTick(event) {
 
     let currentTimeline = event.target;
 
-    const filmCards = document.querySelectorAll('.film_card');
+
     let timelines = document.querySelectorAll('.timeline');
     for (let timeline of timelines) {
 
@@ -972,7 +975,7 @@ function createTimelineTick(event) {
         
 
         const tick = document.createElement('div');
-        tick.className = 'timeline_tick';
+        tick.className = 'timeline_tick tick_new';
         tick.setAttribute('seance_time', time)
         tick.id = draggedFilmId;
         
@@ -984,7 +987,7 @@ function createTimelineTick(event) {
         });
 
         if (isSeanceExsists(currentTimeline, time)) {
-            alert('Тик уже существует в этом времени!');
+            alert('Сеанс в это время уже существует!');
             return;
         }
 
@@ -1067,35 +1070,42 @@ function deleteSeance() {
 
             })
 
-            tick.addEventListener('dragend', (event) => {
-                let otherTimeline = event.target;
-                console.log(currentTimeline)
-                
-                if(otherTimeline) {
-                    
-                }
+            let isOverGarbage = false;
+            garbage.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                isOverGarbage = true;
             })
+
+            garbage.addEventListener('dragleave', (event) => {
+                isOverGarbage = false;
+            });
 
 
             tick.ondragend = function (event) {
-                event.target.remove()
-                const seanceId = event.target.getAttribute('seance_id');
+                event.preventDefault();
 
-                fetch(`https://shfe-diplom.neto-server.ru/seance/${seanceId}`, {
-                            method: 'DELETE',
-                        })
-                        .then( response => response.json())
-                        .then( data => console.log( data ));
+                if (isOverGarbage){
+                    const deletableEl = event.target;
+                    deletableEl.remove()
 
-                footnotes.forEach(elem => {
-                    if (seanceTime === elem.textContent && elem.id === tick.id) {
-                        elem.remove()
-                    }
-                })
+                    footnotes.forEach(elem => {
+                        if (seanceTime === elem.textContent && elem.id === tick.id) {
+                            elem.remove()
+                        }
+                    })
+
+                    const seanceId = event.target.getAttribute('seance_id');
+
+                    fetch(`https://shfe-diplom.neto-server.ru/seance/${seanceId}`, {
+                                method: 'DELETE',
+                            })
+                            .then( response => response.json())
+                            .then( data => console.log( data ));
+                };
+         
             garbage.classList.add('hidden')
             setOffsets();
             timeline.ondrop = drop;
-
             }
         })
         
@@ -1110,7 +1120,7 @@ function isSeanceExsists(timeline, time) {
         }
     }
     return false;
-}
+};
 
 function randomizeColor() {
     const colors = ['#CAFF85', '#85FF89', '#85FFD3', '#85E2FF', '#8599FF'];
