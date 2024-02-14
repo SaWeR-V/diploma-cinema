@@ -247,7 +247,7 @@ export async function renderAdminTable() {
         btn.addEventListener('click', () => {
             const section = btn.closest('section');
             if (section) {
-                const currentContainer = section.querySelector('.content_container')
+                const currentContainer = section.querySelector('.container')
                 if (currentContainer) {
                     currentContainer.classList.toggle('hidden')
                     btn.classList.toggle('closed')
