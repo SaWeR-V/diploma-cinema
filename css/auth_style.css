@@ -92,10 +92,16 @@ a {
     opacity: 0.5;
 }
 
-.auth_container {
+.login_form {
+    display: flex;
+    width: 480px;
+    flex-direction: column;
     position: relative;
     z-index: 1;
-    width: 480px;
+}
+
+.auth_container {
+    position: relative;
     display: flex;
     background-color: rgba(234, 233, 235, 0.95);
     flex-direction: column;
@@ -107,7 +113,6 @@ a {
     background-color: rgba(99, 83, 108, 1);
     width: 100%;
     position: relative;
-    z-index: 1;
 }
 
 .auth_header {
@@ -1133,6 +1138,10 @@ a {
 
     .first::before, .section_header::before, .container::before, .last_container::before {
         content: none;
+    }
+
+    .login_form {
+        max-width: 365px;
     }
 
     .heading::before {
