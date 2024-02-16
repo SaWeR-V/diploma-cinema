@@ -143,9 +143,11 @@ async function showHall() {
             header.insertAdjacentHTML('afterend', `
                                 <div class="hall_container fade_in">
                                     <section class="seance_description">
-                                        <h3>${filmName}</h3>
-                                        <p><span class="seance_starts">Начало сеанса: ${selectedSeance}</span></p>
-                                        <h3>${hallName}</h3>
+                                        <div class="descriptions">
+                                            <h3>${filmName}</h3>
+                                            <p><span class="seance_starts">Начало сеанса: ${selectedSeance}</span></p>
+                                            <h3>${hallName}</h3>
+                                        </div>
                                     </section>
                                         <div class="places_container">
                                             <div class="places" id="places">
@@ -160,6 +162,31 @@ async function showHall() {
                                 </div>`);
                 }
             };
+
+            const seanceDesc = document.querySelector('.seance_description');
+            const placesCont = document.querySelector('.places_container');
+            console.log(seanceDesc)
+
+            
+            let hintBlock = seanceDesc.querySelector('.seancedesc_hint');
+
+            
+
+            if (window.outerWidth <= 768) {
+                console.log(placesCont)
+
+                placesCont.addEventListener('dblclick', () => {
+                    placesCont.classList.toggle('scaling')
+                })
+
+                if (!hintBlock) {
+                    seanceDesc.insertAdjacentHTML('beforeend', `<div class="seancedesc_hint">Тапните дважды, чтобы увеличить</div>`)
+                }
+                else {
+                    return
+                }
+            }
+
 
         for (let hall of halls) {
             let legend = document.querySelector('.legend');
@@ -316,9 +343,17 @@ async function showHall() {
             }; 
         }
     }
-            const book = document.querySelector('button.book');
+            
+            const cells = Array.from(document.querySelectorAll('.cell'));
+            const book = document.querySelector('.book');
+
             book.addEventListener('click', () => {
-                check();
+                if (cells.some(cell => cell.classList.contains('cell_active'))) {
+                    check()
+                }
+                else {
+                    alert('Выберите хотя бы одно место!')
+                }
             });
         })
     })

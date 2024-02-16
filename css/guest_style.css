@@ -58,8 +58,8 @@ a {
     position: relative;
     z-index: 1;
     max-width: 962px;
-    width: 100%;
-    padding: 14px;
+    width: 96%;
+    padding: 14px 0 14px 0;
     top: 1px;
     display: flex;
     justify-content: space-between;
@@ -257,7 +257,8 @@ h3 {
 
 .hall_container {
     z-index: 1;
-    width: 990px;
+    max-width: 990px;
+    width: 100%;
     background-color: rgba(241, 235, 230, 0.95);
     border-radius: 2px;
     display: flex;
@@ -266,10 +267,37 @@ h3 {
 }
 
 .seance_description {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    justify-content: space-between;
+}
+.descriptions {
     gap: 10px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+}
+
+.seancedesc_hint::before {
+    content: '';
+    background-image: url('../images/finger.png');
+    background-repeat: no-repeat;
+    display: block;
+    position: absolute;
+    width: 24px;
+    height: 32px;
+    left: -32%;
+    top: 18%;
+}
+
+.seancedesc_hint {
+    font-family: 'Roboto-thin', sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: 300;
+    max-width: 67px;
+    text-align: center;
+    position: relative;
 }
 
 .seance_starts {
@@ -286,6 +314,7 @@ h3 {
     background-color: rgba(23, 29, 36, 1);
     flex-direction: column;
     align-items: center;
+    transition: .2s;
 }
 
 .display {
@@ -443,7 +472,7 @@ h3 {
 .book_container {
     display: flex;
     justify-content: center;
-    padding: 10px;
+    padding: 25px;
 }
 
 .book {
@@ -486,7 +515,8 @@ h3 {
 }
 
 .check_header_container {
-    width: 990px;
+    max-width: 990px;
+    width: 100%;
     background-color: rgba(241, 235, 230, 0.95);
     z-index: 1;
 }
@@ -512,7 +542,8 @@ h3 {
 }
 
 .check_main_container {
-    width: 990px;
+    max-width: 990px;
+    width: 100%;
     background-color: rgba(241, 235, 230, 0.95);
     z-index: 1;
     position: relative;
@@ -584,6 +615,11 @@ h3 {
     display: none;
 }
 
+.scaling {
+    scale: 1.2;
+    transition: .2s;
+}
+
 @keyframes fadeOut {
     0% {
         opacity: 1;
@@ -600,4 +636,18 @@ h3 {
     100% {
         opacity: 1;
     }
+}
+
+@media (max-width: 768px) {
+    .header_container {
+        max-width: 740px;
+    }
+
+}
+
+@media (max-width: 390px) {
+    .header_container {
+        max-width: 362px;
+    }
+
 }
