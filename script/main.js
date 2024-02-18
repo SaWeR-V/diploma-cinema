@@ -1,43 +1,34 @@
 import login from "./modules/login.js";
 import { sendGrid } from "./modules/sendGrid.js";
-import { addSeances } from "./modules/addSeances.js";
+import { addSeances, deleteSeances } from "./modules/seancesMgmt.js";
 import { editPrices } from "./modules/editPrices.js";
+import { getSeances } from "./modules/getSeances.js";
+import { setOffsets } from "./modules/setOffsets.js";
+import { dragStart, drop } from "./modules/dnd.js";
 
-// import { createDom } from "./modules/dom_creator.js";
-// login();
 
-const header = document.getElementById('header');
+
 const main = document.querySelector('.main_container');
-
-let halls = null;
-let films = null;
-let seances = null;
-
-let draggedFilmId;
-let draggedFilmDuration;
-let draggedCardColor;
-
-let hallsOptions = '';
-let filmsOptions = '';
-
-
-
 
 export async function getData() {
     const response = await fetch('https://shfe-diplom.neto-server.ru/alldata');
     const data = await response.json();
-    return data.result;
+    let arr = data.result;
+
+    return {
+        halls: arr.halls,
+        films: arr.films,
+        seances: arr.seances
+    }
 };
 
-export async function identify() {
-    const dataArr = await getData();
-        halls = dataArr.halls;
-        films = dataArr.films;
-        seances = dataArr.seances;
-    };
 
 export async function renderAdminTable() {
-    await identify();
+    const data = await getData();
+
+    let halls = data.halls;
+    let films = data.films;
+    let seances = data.seances;
 
     let hallsHTML = '';
     let hallsCfgBtns = '';
@@ -46,6 +37,7 @@ export async function renderAdminTable() {
     let hallTimelines = '';
     let salesCfgBtns = '';
     
+    const header = document.getElementById('header');
 
 
     for (let hall of halls) {
@@ -58,7 +50,6 @@ export async function renderAdminTable() {
         pricesCfgBtns += `<li class="config_btn prices-cfg" id="${hallId}">${hallNames}</li>`
         hallTimelines += `<div class="timeline_block"><div class="timeline" id="${hallId}"></div></div>`;
         salesCfgBtns += `<li class="config_btn sales-cfg" id="${hallId}" opened="${hallStatus}">${hallNames}</li>`
-        hallsOptions += `<option class="hall_option" id="${hallId}">${hallNames}</option>`;
     }
 
     header.insertAdjacentHTML('afterend', `
@@ -578,30 +569,12 @@ export async function renderAdminTable() {
                                 </div>
                             </div>
                             `;
-
-        filmsOptions += `<option class="film_option">${filmName}</option>`;
     }
     
     const avilableFilms = document.querySelector('.films_collection');
     avilableFilms.innerHTML = filmsCollection;
-
-    const filmCards = document.querySelectorAll('.film_card');
-    filmCards.forEach(card => {
-        card.style.backgroundColor = randomizeColor();
-
-        card.draggable = true;
-        card.querySelector('img').draggable = false;
-
-        card.addEventListener(`dragstart`, (event) => {
-            event.dataTransfer.setData('filmName', card.querySelector('.film_name').textContent);
-            draggedFilmId = +event.target.id;
-            draggedFilmDuration = card.querySelector('span').textContent;
-            draggedCardColor = card.style.backgroundColor;
-
-            event.dataTransfer.setDragImage(event.target.querySelector('img'), 18, 25);
-        })
-    })
-
+    
+    dragStart();
     
     for (let hall of halls) {
         let timeLines = document.querySelectorAll('div.timeline');
@@ -620,9 +593,6 @@ export async function renderAdminTable() {
             timeline.ondrop = drop;
         })  
     };
-
-    getSeances();
-    deleteSeance();
 
 /*   Блок поп-ап добавления фильма   */
     const addFilm = document.getElementById('add_film');
@@ -692,11 +662,7 @@ export async function renderAdminTable() {
 
         
 });
-
-        
-        
-        
-
+         
 
 /*   конец блока поп-ап добавления фильма   */
 
@@ -784,346 +750,12 @@ deleteFilm.forEach(btn => {
 
         getSeances();
     }
+
 };
 
 /*---- конец блока управления продажами ----*/
 
-
-
-
-
-function drop(event) {
-    let currentHall = event.target.previousElementSibling.textContent;;
-    let filmName = event.dataTransfer.getData('filmName');
-    
     
 
-    main.insertAdjacentHTML('afterbegin', `
-        <div class="popup_container fade_in">
-            <div class="popup">
-                <div class="popup_header">Добавление сеанса<div class="close_popup"></div></div>
-                    <form class="new_seance_params">
-                        <label class="annot_col">Название зала
-                            <div class="options">
-                                <select class="seance_input" name="hallName">
-                                    ${hallsOptions}
-                                </select>
-                            </div>
-                        </label>
-                        <label class="annot_col">Название фильма
-                            <div class="options">
-                                <select class="seance_input" name="filmName">
-                                    ${filmsOptions}
-                                </select>
-                            </div>
-                        </label>
-                        <label class="annot_col">Время начала
-                            <input class="seance_input time" value="00:00" type="time">
-                        </label>
-                    </form>
-                <div class="popup_btns_container">
-                    <button class="popup_btn" id="add-seance">Добавить фильм</button>
-                    <button class="popup_btn popup_cancel">Отменить</button>
-                </div>
-            </div>
-        </div>`
-    )
 
-    const optionsHalls = document.querySelectorAll('.hall_option');
-    optionsHalls.forEach(option => {
-        if (option.textContent === currentHall) {
-            option.selected = true
-        }
-    })
-
-    const optionFilm = document.querySelectorAll('.film_option');
-    optionFilm.forEach(option => {
-        if (option.textContent === filmName) {
-            option.selected = true
-        }
-    })
-    
-    const closePopup = document.querySelector('div.close_popup');
-    const cancel = document.querySelector('button.popup_cancel');
-    const popupCont = document.querySelector('div.popup_container');
-    const addSeance = document.getElementById('add-seance');
-
-    [closePopup, cancel].forEach(elem => {
-        elem.addEventListener('click', () => {
-            popupCont.remove()
-        })
-    });
-
-    addSeance.addEventListener('click', () => {
-        createTimelineTick(event);
-        popupCont.remove()
-    })
-
-};
-
-function getSeances() {
-    let timeLines = document.querySelectorAll('.timeline');
-    timeLines.forEach(timeline => {
-        const timelineSeances = seances.filter(seance => +timeline.id === seance.seance_hallid);
-        timelineSeances.forEach(seance => {
-            const film = films.find(film => seance.seance_filmid === film.id);
-                    timeline.innerHTML += `<div class="timeline_tick" id="${film.id}" duration="${film.film_duration}" seance_time="${seance.seance_time}" seance_id="${seance.id}">${film.film_name}</div>`;
-                })
-                
-                const timelineTicks = timeline.querySelectorAll('.timeline_tick');
-                timelineTicks.forEach(tick => {
-                    const filmDuration = tick.getAttribute('duration');
-                    const seanceTime = tick.getAttribute('seance_time');
-                            
-                    const timeSet = {
-                        hours : +seanceTime.split(':')[0],
-                        minutes : +seanceTime.split(':')[1],
-                    };
-
-                    let totalMinutes = 60 * 24;
-                    let minuteInPercent = totalMinutes / 100;
-                    let calculatedWidth = (+filmDuration / minuteInPercent).toFixed(2);
-                    let calculatedOffset = (timeSet.hours * 60 + timeSet.minutes) / minuteInPercent.toFixed(2);
-
-                    tick.style.width = calculatedWidth + '%';
-                    tick.style.left = calculatedOffset + '%';
-                            
-
-
-                    const footnoteBlocks = document.querySelectorAll('.footnotes');
-                    footnoteBlocks.forEach(block => {
-                        if (+timeline.id === +block.id) {
-                            block.innerHTML += `<div class="time_footnote" id="${tick.id}">${seanceTime}</div>`;
-                        }
-
-                        setOffsets();
-
-                        let timeFootnotes = block.querySelectorAll('.time_footnote');
-                        let elemWidthAcc = 0;
-        
-                        timeFootnotes.forEach(elem => {                            
-                            if (timeFootnotes[0] !== elem) {
-                                elemWidthAcc += +(elem.offsetWidth / (timeline.offsetWidth / 100)).toFixed(2);
-                                elem.style.left += (calculatedOffset - elemWidthAcc) + '%';
-                            }
-                            else {
-                                elem.style.left += calculatedOffset + '%';
-                            }
-                        })
-                    })
-
-                    const filmCards = document.querySelectorAll('.film_card');
-                    filmCards.forEach(filmCard => {
-                        if (filmCard.id === tick.id) {
-                            tick.style.backgroundColor = filmCard.style.backgroundColor;
-                        }
-                    })
-                })
-            }) 
-                 
-};
-
-function setOffsets() {
-    let timelines = document.querySelectorAll('.timeline');
-    timelines.forEach(timeline => {
-        let ticksWidthSum = 0;
-        let ticks = timeline.querySelectorAll('.timeline_tick');
-        ticks.forEach(tick => {
-            
-            const seanceTime = tick.getAttribute('seance_time');         
-            const timeSet = {
-                hours : +seanceTime.split(':')[0],
-                minutes : +seanceTime.split(':')[1],
-            };
-
-            let totalMinutes = 60 * 24;
-            let minuteInPercent = totalMinutes / 100;
-
-            let calculatedOffset = (timeSet.hours * 60 + timeSet.minutes) / minuteInPercent.toFixed(2);
-            if(ticks[0] !== tick) {
-                tick.style.left = (calculatedOffset - ticksWidthSum) + '%';
-                ticksWidthSum += (+tick.style.width.split('%')[0]);
-            }
-            else if (ticks.length >= 2) {
-                tick.style.left = (calculatedOffset - ticksWidthSum) + '%';
-                ticksWidthSum += (+ticks[1].previousElementSibling.style.width.split('%')[0]);
-            }
-            else {
-                tick.style.left = calculatedOffset + '%';
-            }
-
-        })
-    })
-            
-};
-
-
-
-function createTimelineTick(event) {
-    let filmDuration = draggedFilmDuration;
-    let cardColor = draggedCardColor;
-
-    let currentTimeline = event.target;
-
-
-    let timelines = document.querySelectorAll('.timeline');
-    for (let timeline of timelines) {
-
-        const optionFilm = document.querySelectorAll('.film_option');
-        const time = document.querySelector('.time').value;
-
-        
-
-        const tick = document.createElement('div');
-        tick.className = 'timeline_tick tick_new';
-        tick.setAttribute('seance_time', time)
-        tick.id = draggedFilmId;
-        
-
-        optionFilm.forEach(option => {
-            if (option.selected){
-                tick.innerHTML = `${option.textContent}`;
-            }
-        });
-
-        if (isSeanceExsists(currentTimeline, time)) {
-            alert('Сеанс в это время уже существует!');
-            return;
-        }
-
-        currentTimeline.appendChild(tick);
-
-        // const optionsHalls = document.querySelectorAll('.hall_option');
-        // optionsHalls.forEach(option => {
-        //     if (option.selected) {
-        //         if (timeline.id === option.id) {
-        //             timeline.appendChild(tick);
-        //         }
-        //     }
-        //     if(timeline.id === option.selected.id) {
-        //         console.log(option.id)
-        //         timeline.appendChild(tick);
-        //     }
-        // })
-
-        let timeSet = {
-            hours : +time.split(':')[0],
-            minutes : +time.split(':')[1],
-        };
-
-        
-        let totalMinutes = 60 * 24;
-        let minuteInPercent = (totalMinutes / 100);
-        let calculatedWidth = ((+filmDuration) / minuteInPercent).toFixed(2);
-        let calculatedOffset = ((timeSet.hours * 60 + timeSet.minutes) / minuteInPercent).toFixed(2);
-        
-        let ticksArr = timeline.querySelectorAll('.timeline_tick');
-        let ticksWidthSum = 0;
-
-        ticksArr.forEach(elem => {ticksWidthSum += (+elem.style.width.split('%')[0])});
-
-        tick.style.width = calculatedWidth + '%';
-        tick.style.backgroundColor = cardColor;
-
-        const footnoteBlocks = document.querySelectorAll('.footnotes');
-        footnoteBlocks.forEach(block => {
-            if (+currentTimeline.id === +block.id) {
-                setOffsets();
-                block.innerHTML += `<div class="time_footnote">${time}</div>`;
-            }
-
-            let timeFootnotes = block.querySelectorAll('.time_footnote');
-            let elemWidthAcc = 0;
-
-            timeFootnotes.forEach(elem => {                            
-                if (timeFootnotes[0] !== elem) {
-                    elemWidthAcc = +(elem.offsetWidth / (timeline.offsetWidth / 100)).toFixed(2);
-                    elem.style.left += (calculatedOffset - elemWidthAcc) + '%';
-                }
-                else {
-                    elem.style.left += calculatedOffset + '%';
-                }
-            })
-        
-
-        })
-        return
-    }
-    
-};
-
-function deleteSeance() {
-    let timeLines = document.querySelectorAll('.timeline');
-    const footnotes = document.querySelectorAll('.time_footnote')
-    const garbage = document.querySelector('.trash_bin');
-
-    timeLines.forEach(timeline => {
-
-        const ticks = timeline.querySelectorAll('.timeline_tick');
-        ticks.forEach(tick => {
-            let seanceTime = tick.getAttribute('seance_time');
-            tick.draggable = true;
-            
-            tick.addEventListener('dragstart', (event) => {
-                timeline.ondrop = null;
-                garbage.classList.remove('hidden')
-
-            })
-
-            let isOverGarbage = false;
-            garbage.addEventListener('dragover', (event) => {
-                event.preventDefault();
-                isOverGarbage = true;
-            })
-
-            garbage.addEventListener('dragleave', (event) => {
-                isOverGarbage = false;
-            });
-
-
-            tick.ondragend = function (event) {
-                event.preventDefault();
-
-                if (isOverGarbage){
-                    const deletableEl = event.target;
-                    deletableEl.remove()
-
-                    footnotes.forEach(elem => {
-                        if (seanceTime === elem.textContent && elem.id === tick.id) {
-                            elem.remove()
-                        }
-                    })
-
-                    const seanceId = event.target.getAttribute('seance_id');
-
-                    fetch(`https://shfe-diplom.neto-server.ru/seance/${seanceId}`, {
-                                method: 'DELETE',
-                            })
-                            .then( response => response.json())
-                            .then( data => console.log( data ));
-                };
-         
-            garbage.classList.add('hidden')
-            setOffsets();
-            timeline.ondrop = drop;
-            }
-        })
-        
-    })
-};
-
-function isSeanceExsists(timeline, time) {
-    let ticks = timeline.querySelectorAll('.timeline_tick');
-    for (let tick of ticks) {
-        if (tick.getAttribute('seance_time') === time) {
-            return true;
-        }
-    }
-    return false;
-};
-
-function randomizeColor() {
-    const colors = ['#CAFF85', '#85FF89', '#85FFD3', '#85E2FF', '#8599FF'];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex]
-};
+deleteSeances();
