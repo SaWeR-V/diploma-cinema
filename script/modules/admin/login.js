@@ -1,4 +1,4 @@
-import { renderAdminTable } from "../main.js";
+import { renderAdminTable } from "../../main.js";
 
 const form = document.getElementById('signin_form');
 const signIn = document.getElementById('signin_btn');

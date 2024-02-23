@@ -1,3 +1,6 @@
+import { fillTimetable } from "./modules/user/timetable.js";
+import { ticketsResponse } from "./modules/user/ticketsResponse.js";
+
 async function getData() {
     const response = await fetch('https://shfe-diplom.neto-server.ru/alldata');
     const data = await response.json();
@@ -9,28 +12,9 @@ const nav = document.querySelector('nav');
 const auth = document.querySelector('button.sign_in');
 const header = document.querySelector('.header_container')
 
-function fillTimetable() {
-    const days = document.querySelectorAll('a.day');
-
-    let today = new Date();
-    let daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
-
-    let dayOfWeek = daysOfWeek[today.getDay()];
-
-    days[0].innerHTML = `Сегодня <p>${dayOfWeek}, ${today.getDate()}</p>`;
-        
-    for (let day = 1; day < days.length; day++) {
-        today.setDate(today.getDate() + 1);
-        dayOfWeek = daysOfWeek[today.getDay()];
-        days[day].innerHTML = `${dayOfWeek}, <p>${today.getDate()}</p>`;
-
-        if (dayOfWeek === daysOfWeek[0] || dayOfWeek === daysOfWeek[6]) {
-            days[day].style.color = "#ff0000";
-        }
-    }
-};
 
 fillTimetable();
+
 
 frames.forEach((frame) => {
     frame.addEventListener('click', () => {        
@@ -54,21 +38,21 @@ async function addCinemaCards() {
     let htmlString = '';
 
 for (let film of filmsDb) {
-    let posters = film.film_poster;
+    let poster = film.film_poster;
     let id = film.id;
-    let names = film.film_name;
-    let descriptions = film.film_description;
-    let durations = film.film_duration;
-    let origins = film.film_origin;
+    let name = film.film_name;
+    let description = film.film_description;
+    let duration = film.film_duration;
+    let origin = film.film_origin;
 
     htmlString += `
         <section class="cinema_block" id="${id}">
             <div class="movie_info">
-                <img class="poster" src="${posters}">
+                <img class="poster" src="${poster}">
                 <article class="movie_description">
-                    <h3>${names}</h3>
-                    <p class="description">${descriptions}</p>
-                    <p class="origins">${durations} минут ${origins}</p>
+                    <h3>${name}</h3>
+                    <p class="description">${description}</p>
+                    <p class="origins">${duration} минут ${origin}</p>
                 </article>
             </div>`;
 
@@ -80,7 +64,6 @@ for (let film of filmsDb) {
             let seancesHTML = '';
 
             for (let seance of seances) {
-                
                 seancesHTML += `
                         <button class="seance_btn" id="${hall.id}" film_id="${film.id}">${seance.seance_time}</button>
                         `;
@@ -93,6 +76,12 @@ for (let film of filmsDb) {
                         ${seancesHTML}
                     </div>
                 </div>`;
+        }
+
+        else {
+            // const blocks = document.querySelectorAll('.cinema_block');
+            // blocks.forEach(b => console.log(b))
+            // // console.log('Нет сеансов.')
         }
     }
 

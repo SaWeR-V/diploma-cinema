@@ -1,4 +1,4 @@
-import { getData } from "../main.js";
+import { getData } from "../../main.js";
 import { setOffsets } from "./setOffsets.js";
 
 const data = await getData();
@@ -221,7 +221,7 @@ function isSeanceExsists(timeline, time) {
 };
 
 function randomizeColor() {
-    const colors = ['#CAFF85', '#85FF89', '#85FFD3', '#85E2FF', '#8599FF'];
+    const colors = ['#CAFF85', '#85FF89', '#85FFD3', '#85E2FF', '#8599FF' /*может быть и лишние?*/ ,'#FFDAB9', '#FF7F50', '#F08080'];
     const randomIndex = Math.floor(Math.random() * colors.length);
     return colors[randomIndex]
 };

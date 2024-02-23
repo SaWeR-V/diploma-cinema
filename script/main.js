@@ -1,10 +1,12 @@
-import login from "./modules/login.js";
-import { sendGrid } from "./modules/sendGrid.js";
-import { addSeances, deleteSeances } from "./modules/seancesMgmt.js";
-import { editPrices } from "./modules/editPrices.js";
-import { getSeances } from "./modules/getSeances.js";
-import { setOffsets } from "./modules/setOffsets.js";
-import { dragStart, drop } from "./modules/dnd.js";
+import login from "./modules/admin/login.js";
+import { sendGrid } from "./modules/admin/sendGrid.js";
+import { addSeances, deleteSeances } from "./modules/admin/seancesMgmt.js";
+import { editPrices } from "./modules/admin/editPrices.js";
+import { getSeances } from "./modules/admin/getSeances.js";
+import { dragStart, drop } from "./modules/admin/dnd.js";
+import { sendNewHallCfg, deleteHall } from "./modules/admin/hallsMgmt.js";
+import { addNewFilm, deleteFilm } from "./modules/admin/filmsMgmt.js";
+import { salesToggle } from "./modules/admin/salesMgmt.js";
 
 
 
@@ -28,7 +30,7 @@ export async function renderAdminTable() {
 
     let halls = data.halls;
     let films = data.films;
-    let seances = data.seances;
+
 
     let hallsHTML = '';
     let hallsCfgBtns = '';
@@ -63,7 +65,7 @@ export async function renderAdminTable() {
                 </div>
                 <div class="container">
                     <div class="content">
-                        <ul class="halls_list" id="hallsList">
+                        <ul class="halls_list">
                             <p class="paragraph">Доступные залы:</p>
                             ${hallsHTML}
                         </ul>
@@ -181,9 +183,7 @@ export async function renderAdminTable() {
 
         const closePopup = document.querySelector('div.close_popup');
         const cancel = document.querySelector('button.popup_cancel');
-        const newHallName = document.getElementById('new_hall_popup_input');
         const addHall = document.getElementById('add-hall');
-        const popupCont = document.querySelector('div.popup_container');
 
         [closePopup, cancel].forEach(elem => {
             elem.addEventListener('click', () => {
@@ -191,46 +191,18 @@ export async function renderAdminTable() {
             })
         });
 
-        addHall.addEventListener('click', () => {
-            const params = new FormData()
-            params.set('hallName', `${newHallName.value}`)
-            fetch('https://shfe-diplom.neto-server.ru/hall', {
-                method: 'POST',
-                body: params 
-            })
-            .then( response => response.json())
-            .then( data => console.log( data ));
-
-            const hallsList = document.getElementById('hallsList');
-            hallsList.innerHTML = '';
-
-            popupCont.remove();
-
-            for (let hall of halls) {
-                let hallNames = hall.hall_name;
-                let hallId = hall.id;
-                hallsList.innerHTML += `<li class="halls_list_item">${hallNames}<button class="remove hall" id="${hallId}"></button></li>`;
-            } 
+        addHall.addEventListener('click', () => {      
+            sendNewHallCfg();
         });
 
     });
+
+    deleteHall();
 
     /*---Конец блока ПопАпа---*/
 
     /*   Назначение действий для кнопок (скрытие секций, удаление залов)   */
 
-    const removeHallBtns = document.querySelectorAll('button.remove.hall');
-
-    removeHallBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            fetch(`https://shfe-diplom.neto-server.ru/hall/${+btn.id}`, {
-            method: 'DELETE',
-            })
-            .then( response => response.json())
-            .then( data => console.log( data ));
-        })
-    });
- 
 
     const menuToggle = document.querySelectorAll('.menu_toggle');
 
@@ -571,8 +543,8 @@ export async function renderAdminTable() {
                             `;
     }
     
-    const avilableFilms = document.querySelector('.films_collection');
-    avilableFilms.innerHTML = filmsCollection;
+    const availableFilms = document.querySelector('.films_collection');
+    availableFilms.innerHTML = filmsCollection;
     
     dragStart();
     
@@ -631,7 +603,6 @@ export async function renderAdminTable() {
         )
         const closePopup = document.querySelector('div.close_popup');
         const cancel = document.querySelector('button.popup_cancel');
-        const newFilmParams = document.getElementById('new_film_params')
         const addFilmBtn = document.getElementById('add-film');
         const uploadPoster = document.getElementById('upload-poster');
         const fileUploader = document.getElementById('file-uploader');
@@ -649,93 +620,25 @@ export async function renderAdminTable() {
         });
 
         addFilmBtn.addEventListener('click', () => {
-            const params = new FormData(newFilmParams)
-            fetch('https://shfe-diplom.neto-server.ru/film', {
-                method: 'POST',
-                body: params 
-            })
-            .then( response => response.json())
-            .then( data => console.log( data ));
-    
+            addNewFilm();
+            popupCont.remove()
         });
 
 
-        
 });
          
+deleteFilm();
 
 /*   конец блока поп-ап добавления фильма   */
 
-/* УДАЛЕНИЕ ФИЛЬМА */
-
-const deleteFilm = document.querySelectorAll('button.remove.film');
-deleteFilm.forEach(btn => {
-    btn.addEventListener('click', () => {
-        fetch(`https://shfe-diplom.neto-server.ru/film/${+btn.id}`, {
-            method: 'DELETE',
-            })
-            .then( response => response.json())
-            .then( data => console.log( data ));
-    });
-})
-
-/* -------------------- */
+salesToggle();
 
 /*----конец блока конфигурации сеансов----*/
 
 
 /* Блок управления продажами */
 
-    const configSalesBtns = document.querySelectorAll('.sales-cfg');
-    const blockSales = document.querySelector('div.sales');
-    let statusMsg = document.querySelector('div.sales_message');
 
-    configSalesBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            configSalesBtns.forEach((selected) => {
-                selected.classList.remove('config_selected');
-                btn.classList.add('config_selected');
-            });
-
-            if (Array.from(configSalesBtns).some(btn => btn.classList.contains('config_selected'))) {
-                if (!statusMsg) {
-                    blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
-                    statusMsg = document.querySelector('div.sales_message');
-                }
-                if (btn.getAttribute('opened') === '1') {
-                    statusMsg.innerHTML = `<p class="paragraph">Продажи билетов открыты!</p>
-                                            <button class="sales_manager" id="sales_manager">Приостановить продажу билетов</button>`
-                }
-                else {
-                    statusMsg.innerHTML = `<p class="paragraph">Продажи билетов закрыты.</p>
-                                            <button class="sales_manager" id="sales_manager">Открыть продажу билетов</button>`
-                }
-            }
-            const salesManager = document.getElementById('sales_manager');
-            salesManager.addEventListener('click', () => {
-                if (btn.getAttribute('opened') === '0') {
-                    const params = new FormData()
-                    params.set('hallOpen', '1')
-                    fetch(`https://shfe-diplom.neto-server.ru/open/${+btn.id}`, {
-                            method: 'POST',
-                            body: params 
-                        })
-                        .then(response => response.json())
-                        .then(data => console.log(data));
-                }
-                else {
-                    const params = new FormData()
-                    params.set('hallOpen', '0')
-                    fetch(`https://shfe-diplom.neto-server.ru/open/${+btn.id}`, {
-                            method: 'POST',
-                            body: params 
-                        })
-                        .then(response => response.json())
-                        .then(data => console.log(data));
-                }
-            });
-        })
-    })
 
     const timelinesSave = document.getElementById('timelines_save');
     timelinesSave.onclick = addSeances;

@@ -365,6 +365,11 @@ h3 {
 }
 
 .disabled {
+    border: none;
+    background-color: transparent;
+}
+
+.busy {
     background-color: transparent;
 }
 
@@ -375,10 +380,15 @@ h3 {
 }
 
 .cell.disabled:hover {
+    cursor: default;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.cell.busy:hover {
     cursor: not-allowed;
     background-color: transparent;
     box-shadow: none;
-
 }
 
 .cell_active {

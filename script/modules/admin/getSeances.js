@@ -1,4 +1,4 @@
-import { getData } from "../main.js";
+import { getData } from "../../main.js";
 import { setOffsets } from "./setOffsets.js";
 
 export async function getSeances() {
