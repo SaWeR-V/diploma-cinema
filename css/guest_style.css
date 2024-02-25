@@ -105,6 +105,7 @@ a {
 .week_container {
     max-width: 990px;
     width: 100%;
+    overflow: hidden;
 }
 
 .week {
@@ -130,6 +131,7 @@ a {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    transition: .3s;
 }
 
 .day {
@@ -137,14 +139,19 @@ a {
     color: var(--color-black);
 }
 
-.next {
+.next, .back {
     font-family: 'Consolas';
     font-weight: 700;
     font-size: 24px;
     color: var(--color-black);
 }
 
-.frame:hover, .last_frame:hover {
+.first_frame{
+    background-color: rgba(255, 255, 255, 1);
+    z-index: 1;
+}
+
+.frame:hover, .first_frame:hover, .last_frame:hover {
     background-color: rgba(255, 255, 255, 1);
     box-shadow: 0px 0px 10px var(--color-white);
     transition: .3s;
@@ -630,6 +637,11 @@ h3 {
     transition: .2s;
 }
 
+.smooth_in {
+    animation: SmoothIn;
+    transition: .2s;
+}
+
 @keyframes fadeOut {
     0% {
         opacity: 1;
@@ -645,6 +657,16 @@ h3 {
     }
     100% {
         opacity: 1;
+    }
+}
+
+@keyframes SmoothIn {
+    0% {
+        width: 0;
+    }
+
+    100% {
+        width: 100%;
     }
 }
 

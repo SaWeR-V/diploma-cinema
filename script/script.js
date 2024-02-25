@@ -1,16 +1,31 @@
 import { fillTimetable } from "./modules/user/timetable.js";
-import { ticketsResponse } from "./modules/user/ticketsResponse.js";
+import { checkForSeances } from "./modules/user/seancesCheck.js";
+import { check } from "./modules/user/ticketsResponse.js";
 
-async function getData() {
+export async function getData() {
     const response = await fetch('https://shfe-diplom.neto-server.ru/alldata');
-    const data = await response.json();
-    return data.result;
+    const answer = await response.json();
+    const data = answer.result;
+
+    return {
+        films : data.films,
+        halls : data.halls,
+        seances : data.seances,
+    }
 };
+
+const data = await getData();
+
+console.log(data)
+
+const films = data.films;
+const halls = data.halls;
+const seances = data.seances;
 
 const frames = document.querySelectorAll('li.frame');
 const nav = document.querySelector('nav');
 const auth = document.querySelector('button.sign_in');
-const header = document.querySelector('.header_container')
+const header = document.querySelector('.header_container');
 
 
 fillTimetable();
@@ -27,83 +42,78 @@ frames.forEach((frame) => {
     })
 });
 
-async function addCinemaCards() {
-    const dataArr = await getData();
-    const filmsDb = dataArr.films;
-    const hallsDb = dataArr.halls;
-    const seancesDb = dataArr.seances;
 
-    console.log(dataArr)
+async function addCinemaCards() {
 
     let htmlString = '';
 
-for (let film of filmsDb) {
-    let poster = film.film_poster;
-    let id = film.id;
-    let name = film.film_name;
-    let description = film.film_description;
-    let duration = film.film_duration;
-    let origin = film.film_origin;
+    for (let film of films) {
+        let poster = film.film_poster;
+        let id = film.id;
+        let name = film.film_name;
+        let description = film.film_description;
+        let duration = film.film_duration;
+        let origin = film.film_origin;
 
-    htmlString += `
-        <section class="cinema_block" id="${id}">
-            <div class="movie_info">
-                <img class="poster" src="${poster}">
-                <article class="movie_description">
-                    <h3>${name}</h3>
-                    <p class="description">${description}</p>
-                    <p class="origins">${duration} минут ${origin}</p>
-                </article>
-            </div>`;
+        htmlString += `
+            <section class="cinema_block" id="${id}">
+                <div class="movie_info">
+                    <img class="poster" src="${poster}">
+                    <article class="movie_description">
+                        <h3>${name}</h3>
+                        <p class="description">${description}</p>
+                        <p class="origins">${duration} минут ${origin}</p>
+                    </article>
+                </div>`;
 
-    for (let hall of hallsDb) {
-        let hallName = hall.hall_name;
-        let seances = seancesDb.filter(seance => seance.seance_hallid === hall.id && seance.seance_filmid === id);
+        for (let hall of halls) {
+            let hallName = hall.hall_name;
+            let hallStatus = hall.hall_open;
+            let filteredSeances = seances.filter(seance => seance.seance_hallid === hall.id && seance.seance_filmid === id);
 
-        if (seances.length > 0) {
-            let seancesHTML = '';
+            
+            if (filteredSeances.length > 0) {
+                let seancesHTML = '';
+                if (hallStatus !== 0) {
+                    for (let seance of filteredSeances) {
+                        seancesHTML += `
+                                <button class="seance_btn" id="${hall.id}" film_id="${film.id}">${seance.seance_time}</button>
+                                `;
+                    }
+                
 
-            for (let seance of seances) {
-                seancesHTML += `
-                        <button class="seance_btn" id="${hall.id}" film_id="${film.id}">${seance.seance_time}</button>
-                        `;
+                    htmlString += `
+                        <div class="halls">
+                            <h3>${hallName}</h3>
+                            <div class="seances_btns_container">
+                                ${seancesHTML}
+                            </div>
+                        </div>`;
+                }
             }
 
-            htmlString += `
-                <div class="halls">
-                    <h3>${hallName}</h3>
-                    <div class="seances_btns_container">
-                        ${seancesHTML}
-                    </div>
-                </div>`;
         }
 
-        else {
-            // const blocks = document.querySelectorAll('.cinema_block');
-            // blocks.forEach(b => console.log(b))
-            // // console.log('Нет сеансов.')
-        }
+        htmlString += `
+                </div>
+            </section>`;
     }
 
-    htmlString += `
-            </div>
-        </section>`;
-}
     nav.insertAdjacentHTML('afterend', htmlString)
+
+        
+    checkForSeances();
 };
 
-async function showHall() {
-    await addCinemaCards();
-    const dataArr = await getData();
-
+export function showHall() {
+    addCinemaCards();
+    
     const seanceBtns = document.querySelectorAll('button.seance_btn');
     const cinemaBlocks = document.querySelectorAll('section.cinema_block');
 
-    const halls = dataArr.halls;
-    const films = dataArr.films;
-
     seanceBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
+            btn.setAttribute('clicked', 1)
             cinemaBlocks.forEach((block) => {
                 block.classList.add('fade_out');
                     setTimeout(() => block.classList.add('hidden'), 450);
@@ -118,6 +128,8 @@ async function showHall() {
         const selectedFilmId = +btn.getAttribute('film_id');
         const selectedSeance = btn.textContent;
         let hallName;
+        let filmName;
+
 
         for (let hall of halls) {
             if (hall.id === +btn.id){
@@ -125,9 +137,9 @@ async function showHall() {
             }
         };
 
-        for (let film of films){
+        for (let film of films) {
             if (selectedFilmId === film.id) {
-                let filmName = film.film_name;
+                filmName = film.film_name;
     
             header.insertAdjacentHTML('afterend', `
                                 <div class="hall_container fade_in">
@@ -154,7 +166,6 @@ async function showHall() {
 
             const seanceDesc = document.querySelector('.seance_description');
             const placesCont = document.querySelector('.places_container');
-            console.log(seanceDesc)
 
             
             let hintBlock = seanceDesc.querySelector('.seancedesc_hint');
@@ -162,8 +173,6 @@ async function showHall() {
             
 
             if (window.outerWidth <= 768) {
-                console.log(placesCont)
-
                 placesCont.addEventListener('dblclick', () => {
                     placesCont.classList.toggle('scaling')
                 })
@@ -250,88 +259,9 @@ async function showHall() {
             };
             })
 
-            function check() {
-                const hallWindow = document.querySelector('div.hall_container');
-                const cells = document.querySelectorAll('div.cell');
-                const rows = document.querySelectorAll('div.row');
-                let rowId = [];
-                let cost = 0;
-                let reservedCells = [];
-                let dateOfSeance = document.querySelector('li.selected').innerText.trim();
-                
-                
-                rows.forEach(row => {
-                    if (row.querySelector('div.cell_active')){
-                        rowId.push(row.id)
-                    }
-                })
+            // check();
 
-                cells.forEach(cell => {
-                    if (cell.classList.contains('cell_active')) {
-                        reservedCells.push(cell.id);
-                        cost += (+cell.getAttribute('price'));
-                    }
-                })
-
-                hallWindow.classList.add('hidden');
-
-                for (let hall of halls) {
-                    if (hall.id === +btn.id) {
-                        hallName = hall.hall_name;
-                    };
-                }
-
-                for (let film of films) {
-                    if (selectedFilmId === film.id) {
-                        let filmName = film.film_name;
-
-
-                header.insertAdjacentHTML('afterend', `
-                    <div class="check_header_container">
-                        <h2 class="check_header">Вы выбрали билеты:</h2>
-                    </div>
-                    <div class="check_main_container">
-                        <div class="check_main">
-                            <p class="paragraph">На фильм: <span class="boldered">${filmName}</span></p>
-                            <p class="paragraph">Места: <span class="boldered">${reservedCells}</span></p>
-                            <p class="paragraph">В зале: <span class="boldered">${hallName}</span></p>
-                            <p class="paragraph">Начало сеанса: <span class="boldered">${selectedSeance}</span></p>
-                            <p class="paragraph">Стоимость: <span class="boldered">${cost}</span> рублей</p>
-                        </div>
-                        <div class="get_code_container">
-                            <button class="get_code" id="get_code">Получить код бронирования</button>
-                        </div>
-                        <div class="attention">
-                            <p class="attention_paragraph">После оплаты билет будет доступен в этом окне, а также придёт вам на почту. Покажите QR-код нашему контроллёру у входа в зал.</p>
-                            <p class="attention_paragraph">Приятного просмотра!</p>
-                        </div>
-                    </div>
-                `)
-                
-            let qrResult = QRCreator(`Дата: ${dateOfSeance},
-                                    Время: ${selectedSeance}, 
-                                    Название фильма: ${filmName}, 
-                                    Зал: ${hallName}, 
-                                    Ряд: ${rowId}, 
-                                    Место: ${reservedCells}, 
-                                    Стоимость: ${cost}.
-                                    Билет действителен строго на свой сеанс.`
-                    , {image: 'svg'});
-
-            let qrContainer = document.createElement('div');
-            qrContainer.className = 'qr_container fade_in';
-            qrContainer.appendChild(qrResult.result)
-
-            const getCode = document.querySelector('button.get_code');
-            const attentionParargaphs = document.querySelectorAll('.attention_paragraph');
-
-            getCode.addEventListener('click', () => {
-                getCode.replaceWith(qrContainer);
-                attentionParargaphs[0].innerText = 'Покажите QR-код нашему контроллеру для подтверждения бронирования.';
-            })
-            }; 
-        }
-    }
+            
             
             const cells = Array.from(document.querySelectorAll('.cell'));
             const book = document.querySelector('.book');
@@ -354,3 +284,10 @@ showHall();
 auth.addEventListener('click', () => {
     location.href = './login.html';
 })
+
+
+
+
+
+
+    

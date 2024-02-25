@@ -16,25 +16,60 @@ export function fillTimetable() {
             days[day].style.color = "#ff0000";
         }
     }
+
+
+
     scrollTimetable();
 };
 
 function scrollTimetable() {
     const frames = document.querySelectorAll('.frame')
-    let daysCounter = 0;
     const next = document.querySelector('.last_frame');
+    const back = next.cloneNode(true);
+    back.className = 'frame first_frame';
+    back.innerHTML = `<a href="#" class="back"><</a>`
+    const weekCont = document.querySelector('.week_container');
+    let daysCounter = 0;
+
     next.addEventListener('click', () => {
-        console.log('Нажали на кнопку next')
+        // console.log(daysCounter)
+        frames.forEach((frame, index) => {
+            frame.classList.remove('selected');
+            frames[0].replaceWith(back)
+            if (!frame.classList.contains('last_frame') && !frame.classList.contains('first_frame')) {
+                frame.style.transform = `translateX(${-100 * daysCounter}%)`;
+                // }
+                    // console.log(frame.getBoundingClientRect())
+
+                    // frame.classList.add('hidden')
+            }
+
+            
+        });
         daysCounter++;
         console.log(daysCounter)
-        frames[0].classList.remove('selected');
+        console.log(next.previousElementSibling)
+        next.previousElementSibling.insertAdjacentHTML('afterend', `<li class="frame smooth_in"><a href="#" class="day"></a></li>`)
+        fillTimetable()
+        // frames[0].classList.add('hidden')
+    })
+
+    back.addEventListener('click', () => {
+        // console.log(daysCounter)
         frames.forEach((frame, index) => {
-            console.log(frames.lastIndexOf())
-            // if (!frames.lastIndexOf()){
-            //     frame.style.transform += `translateX(${-100}%)`;
-            // }
-        }
-        );
+            frame.classList.remove('selected');
+            if (!frame.classList.contains('last_frame') && !frame.classList.contains('first_frame')) {
+                frame.style.transform += `translateX(${100 * daysCounter}%)`;
+                // }
+                    // console.log(frame.getBoundingClientRect())
+
+                    // frame.classList.add('hidden')
+            }
+
+            
+        });
+        daysCounter--;
+        console.log(daysCounter)
         // frames[0].classList.add('hidden')
     })
 }

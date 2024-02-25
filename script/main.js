@@ -15,7 +15,7 @@ const main = document.querySelector('.main_container');
 export async function getData() {
     const response = await fetch('https://shfe-diplom.neto-server.ru/alldata');
     const data = await response.json();
-    let arr = data.result;
+    const arr = data.result;
 
     return {
         halls: arr.halls,
