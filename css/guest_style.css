@@ -132,6 +132,12 @@ a {
     align-items: center;
     cursor: pointer;
     transition: .3s;
+
+    -webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .day {
@@ -144,11 +150,6 @@ a {
     font-weight: 700;
     font-size: 24px;
     color: var(--color-black);
-}
-
-.first_frame{
-    background-color: rgba(255, 255, 255, 1);
-    z-index: 1;
 }
 
 .frame:hover, .first_frame:hover, .last_frame:hover {

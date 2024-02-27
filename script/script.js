@@ -31,16 +31,16 @@ const header = document.querySelector('.header_container');
 fillTimetable();
 
 
-frames.forEach((frame) => {
-    frame.addEventListener('click', () => {        
-        frames.forEach((active) => {
-            if(!frame.classList.contains('last_frame')){
-                active.classList.remove('selected')
-                frame.classList.add('selected')
-            }
-        })
-    })
-});
+// frames.forEach((frame) => {
+//     frame.addEventListener('click', () => {        
+//         frames.forEach((active) => {
+//             if(!frame.classList.contains('last_frame')){
+//                 active.classList.remove('selected')
+//                 frame.classList.add('selected')
+//             }
+//         })
+//     })
+// });
 
 
 async function addCinemaCards() {
@@ -77,7 +77,7 @@ async function addCinemaCards() {
                 if (hallStatus !== 0) {
                     for (let seance of filteredSeances) {
                         seancesHTML += `
-                                <button class="seance_btn" id="${hall.id}" film_id="${film.id}">${seance.seance_time}</button>
+                                <button class="seance_btn" id="${hall.id}" film_id="${film.id}" seance_id="${seance.id}">${seance.seance_time}</button>
                                 `;
                     }
                 

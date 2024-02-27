@@ -17,35 +17,35 @@ export async function check() {
     let dateOfSeance = document.querySelector('li.selected').innerText.trim();
 
     let selectedFilmId;
-    let selectedSeance; 
+    let selectedSeanceId;
+    let selectedSeanceTime; 
     let hallName;
     let filmName;
     
     
     rows.forEach(row => {
         if (row.querySelector('div.cell_active')){
-            rowId.push(row.id)
+            rowId.push(+row.id)
         }
     })
 
     cells.forEach(cell => {
         if (cell.classList.contains('cell_active')) {
-            reservedCells.push(cell.id);
+            reservedCells.push(+cell.id);
             cost += (+cell.getAttribute('price'));
         }
     })
 
     hallWindow.classList.add('hidden');
 
-    
-
 
     for (let btn of seanceBtns) {
-        const clicked = btn.getAttribute('clicked')
-        
+        const clicked = btn.getAttribute('clicked');
+    
         if (clicked === '1'){
             selectedFilmId = +btn.getAttribute('film_id');
-            selectedSeance = btn.textContent;
+            selectedSeanceId = +btn.getAttribute('seance_id');
+            selectedSeanceTime = btn.textContent;
         }
 
         for (let hall of halls) {
@@ -71,7 +71,7 @@ export async function check() {
                 <p class="paragraph">На фильм: <span class="boldered">${filmName}</span></p>
                 <p class="paragraph">Места: <span class="boldered">${reservedCells}</span></p>
                 <p class="paragraph">В зале: <span class="boldered">${hallName}</span></p>
-                <p class="paragraph">Начало сеанса: <span class="boldered">${selectedSeance}</span></p>
+                <p class="paragraph">Начало сеанса: <span class="boldered">${selectedSeanceTime}</span></p>
                 <p class="paragraph">Стоимость: <span class="boldered">${cost}</span> рублей</p>
             </div>
             <div class="get_code_container">
@@ -86,7 +86,7 @@ export async function check() {
 
         
     let qrResult = QRCreator(`Дата: ${dateOfSeance},
-                            Время: ${selectedSeance}, 
+                            Время: ${selectedSeanceTime}, 
                             Название фильма: ${filmName}, 
                             Зал: ${hallName}, 
                             Ряд: ${rowId}, 
@@ -106,22 +106,35 @@ export async function check() {
     getCode.addEventListener('click', () => {
         getCode.replaceWith(qrContainer);
         attentionParargaphs[0].innerText = 'Покажите QR-код нашему контроллеру для подтверждения бронирования.';
-    })
+        ticketsResponse();
+    });
 
 
     function ticketsResponse() {
+        const selectedDate = document.querySelector('li.selected').firstElementChild.getAttribute('date');
+        // console.log(selectedDate)
+        const tickets = {
+            row: rowId,
+            place: reservedCells,
+            coast: cost,
+        };
+
+        console.log(tickets)
+
+
         const params = new FormData();
-        params.set('seanceId', )
-        params.set('ticketDate', )
-        params.set('tickets', )
-    
+
+        params.set('seanceId', selectedSeanceId)
+        params.set('ticketDate', selectedDate)
+        params.set('tickets', tickets)
+
         fetch('https://shfe-diplom.neto-server.ru/ticket', {
             method: 'POST',
             body: params
+
         })
         .then(response => response.json())
         .then(data => console.log(data))
     }
-
 };
 
