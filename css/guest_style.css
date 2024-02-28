@@ -140,6 +140,10 @@ a {
 	user-select: none;
 }
 
+/* .first_frame, .last_frame {
+    min-width: 8%;
+} */
+
 .day {
     font-family: 'Roboto';
     color: var(--color-black);
@@ -261,6 +265,19 @@ h3 {
 .seance_btn:active {
     scale: 0.95;
     transition: .1s;
+}
+.seance_btn:disabled{
+    width: max-content;
+}
+
+.seance_btn:disabled:hover{
+    cursor: default;
+    scale: none;
+    background-color: var(--color-white);
+}
+
+.seance_btn:disabled:active{
+    scale: none;
 }
 
 .hall_container {

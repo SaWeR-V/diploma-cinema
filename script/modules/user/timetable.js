@@ -36,7 +36,6 @@ function scrollTimetable() {
     let daysCounter = 0;
     
     next.addEventListener('click', () => {
-        
         let frames = document.querySelectorAll('.frame');
         if (daysCounter <= 14) {
             frames.forEach((frame, index) => {
@@ -44,31 +43,23 @@ function scrollTimetable() {
                 frames[1].insertAdjacentElement('beforebegin', back);
 
                 if (!frame.classList.contains('last_frame') && !frame.classList.contains('first_frame')) {
-                    if (daysCounter === index){
-                        // console.log(frame.getBoundingClientRect())
-                        // frame.style.transform = `translateX(${-100 * 1}%)`;
-                        frame.classList.add('hidden');
+                    if (daysCounter === index) {
+                        frame.classList.add('hidden')
                     }
                 }
             });
-            
             daysCounter++;
             addNewDay();
         }
     });
 
     back.addEventListener('click', () => {
-
         let frames = document.querySelectorAll('.frame');
         if (daysCounter > 0) {
             frames.forEach((frame, index) => {
                 frame.classList.remove('selected');
-                // frames[1].insertAdjacentElement('beforebegin', back);
-
                 if (!frame.classList.contains('last_frame') && !frame.classList.contains('first_frame')) {
                     if (daysCounter === index){
-                        // console.log(frame.getBoundingClientRect())
-                        // frame.style.transform = `translateX(${-100 * 1}%)`;
                         frame.classList.remove('hidden');
                     }
                 }
@@ -85,9 +76,8 @@ function scrollTimetable() {
     })
 
     function addNewDay() {
-        next.previousElementSibling.insertAdjacentHTML('afterend', `<li class="frame"><a href="#" class="day"></a></li>`)
-        fillTimetable()
-        console.log(daysCounter)
+        next.previousElementSibling.insertAdjacentHTML('afterend', `<li class="frame"><a href="#" class="day"></a></li>`);
+        fillTimetable();
     }
 
     function goToPreviousDay(){

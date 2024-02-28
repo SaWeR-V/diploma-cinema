@@ -1,5 +1,5 @@
 import { fillTimetable } from "./modules/user/timetable.js";
-import { checkForSeances } from "./modules/user/seancesCheck.js";
+import { checkForSeances, checkForTimeOut } from "./modules/user/seancesCheck.js";
 import { check } from "./modules/user/ticketsResponse.js";
 
 export async function getData() {
@@ -31,82 +31,14 @@ const header = document.querySelector('.header_container');
 fillTimetable();
 
 
-// frames.forEach((frame) => {
-//     frame.addEventListener('click', () => {        
-//         frames.forEach((active) => {
-//             if(!frame.classList.contains('last_frame')){
-//                 active.classList.remove('selected')
-//                 frame.classList.add('selected')
-//             }
-//         })
-//     })
-// });
+addCards();
+checkForSeances();
+checkForTimeOut();    
+    
 
-
-async function addCinemaCards() {
-
-    let htmlString = '';
-
-    for (let film of films) {
-        let poster = film.film_poster;
-        let id = film.id;
-        let name = film.film_name;
-        let description = film.film_description;
-        let duration = film.film_duration;
-        let origin = film.film_origin;
-
-        htmlString += `
-            <section class="cinema_block" id="${id}">
-                <div class="movie_info">
-                    <img class="poster" src="${poster}">
-                    <article class="movie_description">
-                        <h3>${name}</h3>
-                        <p class="description">${description}</p>
-                        <p class="origins">${duration} минут ${origin}</p>
-                    </article>
-                </div>`;
-
-        for (let hall of halls) {
-            let hallName = hall.hall_name;
-            let hallStatus = hall.hall_open;
-            let filteredSeances = seances.filter(seance => seance.seance_hallid === hall.id && seance.seance_filmid === id);
-
-            
-            if (filteredSeances.length > 0) {
-                let seancesHTML = '';
-                if (hallStatus !== 0) {
-                    for (let seance of filteredSeances) {
-                        seancesHTML += `
-                                <button class="seance_btn" id="${hall.id}" film_id="${film.id}" seance_id="${seance.id}">${seance.seance_time}</button>
-                                `;
-                    }
-                
-
-                    htmlString += `
-                        <div class="halls">
-                            <h3>${hallName}</h3>
-                            <div class="seances_btns_container">
-                                ${seancesHTML}
-                            </div>
-                        </div>`;
-                }
-            }
-
-        }
-
-        htmlString += `
-                </div>
-            </section>`;
-    }
-
-    nav.insertAdjacentHTML('afterend', htmlString)
-
-        
-    checkForSeances();
-};
 
 export function showHall() {
-    addCinemaCards();
+
     
     const seanceBtns = document.querySelectorAll('button.seance_btn');
     const cinemaBlocks = document.querySelectorAll('section.cinema_block');
@@ -259,9 +191,7 @@ export function showHall() {
             };
             })
 
-            // check();
 
-            
             
             const cells = Array.from(document.querySelectorAll('.cell'));
             const book = document.querySelector('.book');
@@ -288,6 +218,73 @@ auth.addEventListener('click', () => {
 
 
 
-
+export function addCards() {
+    let cinemaBlocks = document.querySelectorAll('.cinema_block');
+    cinemaBlocks.forEach(block => block.remove())
+    let htmlString = '';
 
     
+    for (let film of films) {
+        let poster = film.film_poster;
+        let id = film.id;
+        let name = film.film_name;
+        let description = film.film_description;
+        let duration = film.film_duration;
+        let origin = film.film_origin;
+
+        htmlString += `
+            <section class="cinema_block" id="${id}">
+                <div class="movie_info">
+                    <img class="poster" src="${poster}">
+                    <article class="movie_description">
+                        <h3>${name}</h3>
+                        <p class="description">${description}</p>
+                        <p class="origins">${duration} минут ${origin}</p>
+                    </article>
+                </div>`;
+
+        for (let hall of halls) {
+            let hallName = hall.hall_name;
+            let hallStatus = hall.hall_open;
+            let filteredSeances = seances.filter(seance => seance.seance_hallid === hall.id && seance.seance_filmid === id);
+            
+            filteredSeances.sort((a, b) => {
+                const timeA = parseInt(a.seance_time.split(":")[0]) * 60 + parseInt(a.seance_time.split(":")[1]);
+                const timeB = parseInt(b.seance_time.split(":")[0]) * 60 + parseInt(b.seance_time.split(":")[1]);
+                return timeA - timeB;
+            });
+
+            
+
+            
+            if (filteredSeances.length > 0) {
+                let seancesHTML = '';
+                if (hallStatus !== 0) {
+                    for (let seance of filteredSeances) {
+                        seancesHTML += `
+                                <button class="seance_btn" id="${hall.id}" film_id="${film.id}" seance_id="${seance.id}">${seance.seance_time}</button>
+                                `;
+                    }
+                
+
+                    htmlString += `
+                        <div class="halls">
+                            <h3>${hallName}</h3>
+                            <div class="seances_btns_container">
+                                ${seancesHTML}
+                            </div>
+                        </div>`;
+                }
+            }
+
+        }
+
+        htmlString += `
+                </div>
+            </section>`;
+    }
+    
+    nav.insertAdjacentHTML('afterend', htmlString)
+
+    
+};  
