@@ -186,6 +186,7 @@ export function showHall() {
                     else {
                         cell.classList.add('disabled')
                         cell.removeAttribute('price', '')
+                        cell.id = '';
                     }
                 })
             };

@@ -21,6 +21,8 @@ export async function check() {
     let selectedSeanceTime; 
     let hallName;
     let filmName;
+
+
     
     
     rows.forEach(row => {
@@ -112,21 +114,24 @@ export async function check() {
 
     function ticketsResponse() {
         const selectedDate = document.querySelector('li.selected').firstElementChild.getAttribute('date');
-        // console.log(selectedDate)
-        const tickets = {
-            row: rowId,
-            place: reservedCells,
-            coast: cost,
+        let tickets = [];
+
+        document.querySelectorAll('div.cell.cell_active').forEach(activeCell => {
+        let ticket = {
+            row: +activeCell.closest('div.row').id,
+            place: +activeCell.id,
+            coast: +activeCell.getAttribute('price')
         };
 
-        console.log(tickets)
+            tickets.push(ticket);
+        });
 
 
         const params = new FormData();
 
         params.set('seanceId', selectedSeanceId)
         params.set('ticketDate', selectedDate)
-        params.set('tickets', tickets)
+        params.set('tickets', JSON.stringify(tickets))
 
         fetch('https://shfe-diplom.neto-server.ru/ticket', {
             method: 'POST',
