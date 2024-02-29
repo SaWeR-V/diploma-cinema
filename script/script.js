@@ -130,7 +130,7 @@ export function showHall() {
             }
         }
 
-        halls.filter(hall => { 
+        halls.forEach(hall => { 
             if (hall.id === +btn.id) {
                 const placesCont = document.getElementById('places');
                 for (let i = 0; i < hall.hall_rows; i++) {
@@ -146,7 +146,8 @@ export function showHall() {
             
                     placesCont.appendChild(rowContainer);
                 }
-            } else {
+            } 
+            else {
                 return;
             }
             
@@ -172,10 +173,13 @@ export function showHall() {
                 }
             }
 
-            for (let i = 1; i < cells.length; i++) {
+            console.log(temporaryArray)
+
+            for (let i = 0; i < cells.length; i++) {
                 cells.forEach(cell => {
-                    cell.id = i++;
-                    cell.setAttribute('status', temporaryArray[i - 2])
+
+                    cell.setAttribute('status', temporaryArray[i++]);
+
                     if (cell.getAttribute('status') === 'vip') {
                         cell.classList.add('vip')
                         cell.setAttribute('price', hall.hall_price_vip)
@@ -183,14 +187,25 @@ export function showHall() {
                     else if (cell.getAttribute('status') === 'standart') {
                         cell.setAttribute('price', hall.hall_price_standart)
                     }
+                    
                     else {
                         cell.classList.add('disabled')
                         cell.removeAttribute('price', '')
-                        cell.id = '';
                     }
+
                 })
             };
-            })
+
+            let enabled = temporaryArray.filter(elem => elem !== "disabled");
+
+            for (let j = 1; j < enabled.length; j++) {
+                for (let cell of cells) {
+                    if (cell.getAttribute('status') !== 'disabled') {
+                        cell.id = j++;
+                    }
+                }
+            }
+        })
 
 
             
