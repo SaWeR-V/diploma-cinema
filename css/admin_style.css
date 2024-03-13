@@ -214,6 +214,7 @@ a {
     width: 100%;
     display: flex;
     flex-direction: column;
+    overflow: clip;
 }
 
 .heading::before {
@@ -714,7 +715,9 @@ a {
     font-size: 16px;
     line-height: 18px;
     letter-spacing: 19px;
-    margin-right: -19px;
+    margin: auto;
+    position: relative;
+    left: 10px;
     text-transform: uppercase;
     padding-bottom: 20px;
 }
@@ -994,7 +997,6 @@ a {
     animation-duration: 1s;
     animation-iteration-count: infinite;
     animation-direction: alternate;
-    /* box-shadow: 0 0 15px goldenrod; */
 }
 
 .footnotes {
@@ -1128,7 +1130,6 @@ a {
     .header_container {
         max-width: 768px;
         width: 95%;
-        padding: 14px;
     }
     
     .login_form {
@@ -1139,7 +1140,12 @@ a {
     .content {
         max-width: 768px;
     }
+
+    /* .places_container {
+        overflow-x: auto;
+    } */
 }
+
 
 @media (max-width: 390px) {
     .header_container {

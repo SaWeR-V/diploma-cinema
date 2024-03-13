@@ -3,31 +3,45 @@ export function salesToggle() {
     const blockSales = document.querySelector('div.sales');
     let statusMsg = document.querySelector('div.sales_message');
 
+    configSalesBtns[0].classList.add('config_selected');
+    let selectedSalesBtn = document.querySelector('.sales-cfg.config_selected');
+
+    if (selectedSalesBtn) {
+        // if (!statusMsg) {
+            blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
+            statusMsg = document.querySelector('div.sales_message');
+            statusMsg.innerHTML = `<p class="paragraph"></p>
+                                    <button class="sales_manager" id="sales_manager"></button>`;   
+        // }
+        checkStatus();
+    }
+
     configSalesBtns.forEach(btn => {
 
         btn.addEventListener('click', () => {
             configSalesBtns.forEach((selected) => {
                 selected.classList.remove('config_selected');
                 btn.classList.add('config_selected');
-
             });
+  
+            checkStatus();
 
-            if (Array.from(configSalesBtns).some(btn => btn.classList.contains('config_selected'))) {
-                if (!statusMsg) {
-                    blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
-                    statusMsg = document.querySelector('div.sales_message');
-                    statusMsg.innerHTML = `<p class="paragraph"></p>
-                                            <button class="sales_manager" id="sales_manager"></button>`;   
-                }
+            // if (Array.from(configSalesBtns).some(btn => btn.classList.contains('config_selected'))) {
+            //     if (!statusMsg) {
+            //         blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
+            //         statusMsg = document.querySelector('div.sales_message');
+            //         statusMsg.innerHTML = `<p class="paragraph"></p>
+            //                                 <button class="sales_manager" id="sales_manager"></button>`;   
+            //     }
 
-                checkStatus();
-            }
+            //     checkStatus();
+            // }
 
             const salesManager = document.getElementById('sales_manager');
             if (salesManager) {
                 salesManager.onclick = salesResponse;
             }
-        })
+        
 
         function salesResponse() {
             const params = new FormData()
@@ -48,21 +62,24 @@ export function salesToggle() {
             .then(response => response.json())
             .then(data => console.log(data));
             checkStatus();
-    
-        };
-    
-        function checkStatus() {
-            const paragraph = statusMsg.querySelector('p');
-            const salesManager = document.getElementById('sales_manager');
-    
-            if (btn.getAttribute('opened') === '1') {
-                paragraph.textContent = 'Продажи билетов открыты!';
-                salesManager.textContent = 'Приостановить продажу билетов';
-            }
-            else {
-                paragraph.textContent = 'Продажи билетов закрыты.';
-                salesManager.textContent = 'Открыть продажу билетов';
-            } 
         };
     })
+
+    })
+
+    function checkStatus() {
+        let selectedSalesBtn = document.querySelector('.sales-cfg.config_selected');
+
+        const paragraph = statusMsg.querySelector('p');
+        const salesManager = document.getElementById('sales_manager');
+
+        if (selectedSalesBtn.getAttribute('opened') === '1') {
+            paragraph.textContent = 'Продажи билетов открыты!';
+            salesManager.textContent = 'Приостановить продажу билетов';
+        }
+        else {
+            paragraph.textContent = 'Продажи билетов закрыты.';
+            salesManager.textContent = 'Открыть продажу билетов';
+        } 
+    };
 };

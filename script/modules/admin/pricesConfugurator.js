@@ -58,6 +58,9 @@ export async function pricesConfigurator() {
     discardChangesPrices.addEventListener('click', () => {
             standartPrice.value = standart;
             vipPrice.value = vip;
+
+        discardChangesPrices.disabled = true;
+        savePrices.disabled = true;
     })
 
     standartPrice.addEventListener('input', (event) => {

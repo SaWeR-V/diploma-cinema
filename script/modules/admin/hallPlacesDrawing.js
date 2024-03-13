@@ -31,7 +31,6 @@ export async function hallCfgInjection() {
     }
 
 
-
     hallPlaces += `<label class="annot_col">Рядов, шт
                             <input class="input" id="row" type="number" value="${row}" min="0">
                         </label>
@@ -99,8 +98,18 @@ export async function hallCfgInjection() {
 
                 placesContainer.appendChild(rowContainer);
             }
+            
 
             if (placesContainer) {
+
+                const placesWrapper = document.getElementById('map_container');
+                
+                if (placesWrapper.scrollWidth > placesContainer.offsetWidth) {
+                    placesContainer.style.overflowX = 'auto';
+                    placesContainer.style.alignItems = 'normal';
+                }
+
+
                 const cells = document.querySelectorAll('div.cell');
                 let currentStatusIndex = 0;
             
