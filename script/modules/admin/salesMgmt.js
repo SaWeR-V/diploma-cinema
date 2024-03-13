@@ -7,12 +7,11 @@ export function salesToggle() {
     let selectedSalesBtn = document.querySelector('.sales-cfg.config_selected');
 
     if (selectedSalesBtn) {
-        // if (!statusMsg) {
-            blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
-            statusMsg = document.querySelector('div.sales_message');
-            statusMsg.innerHTML = `<p class="paragraph"></p>
-                                    <button class="sales_manager" id="sales_manager"></button>`;   
-        // }
+        blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
+        statusMsg = document.querySelector('div.sales_message');
+        statusMsg.innerHTML = `<p class="paragraph"></p>
+                                <button class="sales_manager" id="sales_manager"></button>`;   
+
         checkStatus();
     }
 
@@ -25,17 +24,6 @@ export function salesToggle() {
             });
   
             checkStatus();
-
-            // if (Array.from(configSalesBtns).some(btn => btn.classList.contains('config_selected'))) {
-            //     if (!statusMsg) {
-            //         blockSales.insertAdjacentHTML('beforeend', `<div class="sales_message"></div>`);
-            //         statusMsg = document.querySelector('div.sales_message');
-            //         statusMsg.innerHTML = `<p class="paragraph"></p>
-            //                                 <button class="sales_manager" id="sales_manager"></button>`;   
-            //     }
-
-            //     checkStatus();
-            // }
 
             const salesManager = document.getElementById('sales_manager');
             if (salesManager) {

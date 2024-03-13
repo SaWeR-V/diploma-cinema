@@ -161,10 +161,10 @@ export async function renderAdminTable() {
     `);
     };
 
-    buildSkeleton();
 
     /*   Блок формирования DOM   */
 
+    buildSkeleton();
 
     /*---Конец блока формирования DOM---*/
 
@@ -394,7 +394,6 @@ deleteFilm();
 
 salesToggle();
 
-/*----конец блока конфигурации сеансов----*/
 
 
 /* Блок управления продажами */
