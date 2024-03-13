@@ -8,6 +8,9 @@ let films = data.films;
 
 const main = document.querySelector('.main_container');
 
+const timelinesCancel = document.getElementById('timelines_discard_changes');
+const timelinesSave = document.getElementById('timelines_save');
+
 let hallsOptions = '';
 let filmsOptions = '';
 
@@ -151,19 +154,9 @@ function createTimelineTick(event) {
 
         currentTimeline.appendChild(tick);
 
-        // const optionsHalls = document.querySelectorAll('.hall_option');
-        // optionsHalls.forEach(option => {
-        //     if (option.selected) {
-        //         if (timeline.id === option.id) {
-        //             timeline.appendChild(tick);
-        //         }
-        //     }
-        //     if(timeline.id === option.selected.id) {
-        //         console.log(option.id)
-        //         timeline.appendChild(tick);
-        //     }
-        // })
-
+        timelinesCancel.disabled = false;
+        timelinesSave.disabled = false;
+        
         let timeSet = {
             hours : +time.split(':')[0],
             minutes : +time.split(':')[1],

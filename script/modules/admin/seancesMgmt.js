@@ -2,10 +2,11 @@ import { getSeances } from "./getSeances.js";
 import { setOffsets } from "./setOffsets.js";
 import { drop } from "./dnd.js";
 
+let timelines = document.querySelectorAll('.timeline');
+
+
 export function addSeances() {
-    let timelines = document.querySelectorAll('.timeline');
     let seanceArr = []
-    
 
     timelines.forEach(timeline => {
         let ticks = timeline.querySelectorAll('.timeline_tick');
@@ -38,20 +39,22 @@ export function addSeances() {
         .then( response => response.json())
         .then( data => console.log( data )); 
     }
-
+    let footnotes = document.querySelectorAll('.footnotes');
+    footnotes.forEach(footnote => footnote.innerHTML = '');
     timelines.forEach(timeline => timeline.innerHTML = '');
-
+    
     deleteSeances();
+
 };
 
 
 export async function deleteSeances() {
     await getSeances();
-    let timeLines = document.querySelectorAll('.timeline');
+
     const footnotes = document.querySelectorAll('.time_footnote')
     const garbage = document.querySelector('.trash_bin');
 
-    timeLines.forEach(timeline => {
+    timelines.forEach(timeline => {
 
         const ticks = timeline.querySelectorAll('.timeline_tick');
         ticks.forEach(tick => {

@@ -13,23 +13,23 @@ export async function hallCfgInjection() {
     let hallCfg = [];
     let btn = document.querySelector('.hall-cfg.config_selected')
 
-    // configHallBtns.forEach((btn) => {
 
-        for (let hall of halls) {
 
-            if (hall.id === +btn.id) {
-                row = hall.hall_rows;
-                seat = hall.hall_places;
-            }
-        
-            if (hall.id === +btn.id) {
-                for (let i = 0; i < hall.hall_config.length; i++) {
-                    hallCfg.push(...hall.hall_config[i]);
-                }
-            }   
-            
+    for (let hall of halls) {
+
+        if (hall.id === +btn.id) {
+            row = hall.hall_rows;
+            seat = hall.hall_places;
         }
-    // });
+    
+        if (hall.id === +btn.id) {
+            for (let i = 0; i < hall.hall_config.length; i++) {
+                hallCfg.push(...hall.hall_config[i]);
+            }
+        }   
+        
+    }
+
 
 
     hallPlaces += `<label class="annot_col">Рядов, шт
@@ -61,8 +61,8 @@ export async function hallCfgInjection() {
                     <p class="hint">Чтобы изменить вид кресла, нажмите по нему левой кнопкой мыши</p>
                     <div class="map_container" id="map_container"></div>
                     <div class="btns_container">
-                        <button class="cancel" id="hall_discard_changes">Отмена</button>
-                        <button class="save" id="places_grid">Сохранить</button>
+                        <button class="cancel" id="hall_discard_changes" disabled>Отмена</button>
+                        <button class="save" id="places_grid" disabled>Сохранить</button>
                     </div>
                 </div>
                 `)
@@ -73,64 +73,68 @@ export async function hallCfgInjection() {
 
     const rowArea = document.getElementById('row');
     const seatArea = document.getElementById('seat');
-
     const mapContainer = document.getElementById('map_container');
     
     mapContainer.innerHTML = `<div class="places_container" id="places_container"></div>`;
 
     function drawHallGrid() {
 
-    if (rowArea && seatArea) {
-        rowArea.value = row;
-        seatArea.value = seat;
-        
-        const placesContainer = document.getElementById('places_container');
+        if (rowArea && seatArea) {
+            rowArea.value = row;
+            seatArea.value = seat;
+            
+            const placesContainer = document.getElementById('places_container');
 
-        placesContainer.innerHTML = '';
+            placesContainer.innerHTML = '';
 
-        for (let i = 0; i < rowArea.value; i++) {
-                const rowContainer = document.createElement('div');
-                rowContainer.className = 'hall_row';
-                    
-            for (let k = 0; k < seatArea.value; k++) {
-                const seat = document.createElement('div');
-                seat.className = 'cell';
-                rowContainer.appendChild(seat);
-                }
+            for (let i = 0; i < rowArea.value; i++) {
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'hall_row';
+                        
+                for (let k = 0; k < seatArea.value; k++) {
+                    const seat = document.createElement('div');
+                    seat.className = 'cell';
+                    rowContainer.appendChild(seat);
+                    }
 
-            placesContainer.appendChild(rowContainer);
-        }
+                placesContainer.appendChild(rowContainer);
+            }
 
-        if (placesContainer) {
-            const cells = document.querySelectorAll('div.cell');
-            let currentStatusIndex = 0;
-        
-            for (let cellIndex = 0; cellIndex < cells.length; cellIndex++) {
-                const cell = cells[cellIndex];
-                const initStatus = hallCfg[cellIndex]; 
-                cell.setAttribute('status', initStatus);
-        
-                const statuses = ['standart', 'vip', 'disabled'];
-        
-                cell.addEventListener('click', () => {
-                    const newStatus = statuses[currentStatusIndex];
-                    cell.setAttribute('status', newStatus); 
-                    currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
-        
-                    cell.classList.remove(...statuses);
-                    cell.classList.add(newStatus);
-                });
-        
-                if (initStatus === 'standart') {
-                    cell.classList.add('standart');
-                } else if (initStatus === 'vip') {
-                    cell.classList.add('vip');
-                } else {
-                    cell.classList.add('disabled');
+            if (placesContainer) {
+                const cells = document.querySelectorAll('div.cell');
+                let currentStatusIndex = 0;
+            
+                for (let cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+                    const cell = cells[cellIndex];
+                    const initStatus = hallCfg[cellIndex]; 
+                    cell.setAttribute('status', initStatus);
+            
+                    const statuses = ['standart', 'vip', 'disabled'];
+            
+                    cell.addEventListener('click', () => {
+                        const newStatus = statuses[currentStatusIndex];
+                        cell.setAttribute('status', newStatus); 
+                        currentStatusIndex = (currentStatusIndex + 1) % statuses.length;
+            
+                        cell.classList.remove(...statuses);
+                        cell.classList.add(newStatus);
+
+                        document.getElementById('hall_discard_changes').disabled = false;
+                        document.getElementById('places_grid').disabled = false;
+                    });
+            
+                    if (initStatus === 'standart') {
+                        cell.classList.add('standart');
+                    } 
+                    else if (initStatus === 'vip') {
+                        cell.classList.add('vip');
+                    } 
+                    else {
+                        cell.classList.add('disabled');
+                    }
                 }
             }
         }
-    }
     };
     
     drawHallGrid();
@@ -140,6 +144,9 @@ export async function hallCfgInjection() {
             const newRowValue = event.target.value;
             row = newRowValue;
             updatePlacesContainer(row, seat);
+
+            document.getElementById('hall_discard_changes').disabled = false;
+            document.getElementById('places_grid').disabled = false;
         });
     }
 
@@ -148,6 +155,9 @@ export async function hallCfgInjection() {
             const newSeatValue = event.target.value;
             seat = newSeatValue;
             updatePlacesContainer(row, seat);
+
+            document.getElementById('hall_discard_changes').disabled = false;
+            document.getElementById('places_grid').disabled = false;
         });
     }
 
@@ -193,9 +203,11 @@ export async function hallCfgInjection() {
         
                 if (initStatus === 'standart') {
                     cell.classList.add('standart');
-                } else if (initStatus === 'vip') {
+                } 
+                else if (initStatus === 'vip') {
                     cell.classList.add('vip');
-                } else {
+                } 
+                else {
                     cell.classList.add('disabled');
                 }
             }
@@ -205,7 +217,10 @@ export async function hallCfgInjection() {
 
     const discardChangesHall = document.getElementById('hall_discard_changes');
     discardChangesHall.addEventListener('click', () => {
-        drawHallGrid();
+        hallCfgInjection();
+
+        document.getElementById('hall_discard_changes').disabled = true;
+        document.getElementById('places_grid').disabled = true;
     })
 
 }

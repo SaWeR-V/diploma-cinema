@@ -762,6 +762,20 @@ a {
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
 }
 
+.cancel:disabled, .save:disabled {
+    background-color: rgba(150, 150, 150, 0.8);
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.cancel:disabled:hover, .save:disabled:hover {
+    box-shadow: none;
+    cursor: default;
+}
+
+.cancel:disabled:active, .save:disabled:active {
+    scale: 1;
+}
+
 .cancel:hover, .save:hover {
     cursor: pointer;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.24);

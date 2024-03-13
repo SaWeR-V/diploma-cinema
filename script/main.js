@@ -133,8 +133,8 @@ export async function renderAdminTable() {
                                     </div>
                             </div>
                             <div class="btns_container">
-                                <button class="cancel" id="timelines_discard_changes">Отмена</button>
-                                <button class="save" id="timelines_save">Сохранить</button>
+                                <button class="cancel" id="timelines_discard_changes" disabled>Отмена</button>
+                                <button class="save" id="timelines_save" disabled>Сохранить</button>
                             </div>
                         </div>
                     </div>
@@ -402,15 +402,25 @@ salesToggle();
 
 
     const timelinesSave = document.getElementById('timelines_save');
-    timelinesSave.onclick = addSeances;
-
     const timelinesDiscard = document.getElementById('timelines_discard_changes');
+    const timelines = document.querySelectorAll('.timeline');
+
+
+    timelinesSave.onclick = () => {
+        addSeances();
+
+        timelinesSave.disabled = true;
+        timelinesDiscard.disabled = true;
+    }
+
     timelinesDiscard.onclick = () => {
-        const timelines = document.querySelectorAll('.timeline');
         timelines.forEach(timeline => {timeline.innerHTML = ''});
 
         const footnotes = document.querySelectorAll('.footnotes');
         footnotes.forEach(footnote => footnote.innerHTML = '');
+
+        timelinesSave.disabled = true;
+        timelinesDiscard.disabled = true;
 
         getSeances();
     }
@@ -420,6 +430,4 @@ salesToggle();
 /*---- конец блока управления продажами ----*/
 
     
-
-
 deleteSeances();

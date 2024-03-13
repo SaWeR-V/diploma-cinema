@@ -1,4 +1,5 @@
 export function editPrices() {
+    const discardChangesPrices = document.getElementById('discard_changes_prices');
     const savePrices = document.getElementById('save_prices');
     const currentHall = document.querySelector('.prices-cfg.config_selected');
     const stdPrice = document.getElementById('standart-price');
@@ -14,5 +15,8 @@ export function editPrices() {
             })
                 .then( response => response.json())
                 .then( data => console.log( data ));
+
+        discardChangesPrices.disabled = true;
+        savePrices.disabled = true;
     })
 };
