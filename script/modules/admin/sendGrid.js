@@ -1,3 +1,4 @@
+import { hallCfgInjection } from "./hallPlacesDrawing.js";
 export function sendGrid() {
 
     const arrayConfig = [];
@@ -33,6 +34,11 @@ export function sendGrid() {
                 })
                     .then( response => response.json())
                     .then( data => console.log( data ));
+
+            document.getElementById('hall_discard_changes').disabled = true;
+            savePlacesGrid.disabled = true;
+
+            hallCfgInjection();
         })  
     };
 };

@@ -12,11 +12,17 @@ export function checkForSeances() {
 
 function updateSeanceButtons() {
     const time = new Date();
-    const currentTime = `${time.getHours()}:${time.getMinutes()}`;
     const seanceBtns = document.querySelectorAll('.seance_btn');
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
 
     seanceBtns.forEach(btn => {
-        if (currentTime > btn.textContent) {
+        const btnTime = {
+            hours : +btn.textContent.split(':')[0],
+            minutes : +btn.textContent.split(':')[1]
+        }
+
+        if (hours > btnTime.hours || (hours === btnTime.hours && minutes >= btnTime.minutes)) {
             btn.disabled = true;
             btn.textContent = "N/A today";
         }

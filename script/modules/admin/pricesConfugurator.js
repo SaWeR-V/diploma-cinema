@@ -4,6 +4,7 @@ import { editPrices } from "./editPrices.js";
 export async function pricesConfigurator() {
     const data = await getData();
     const halls = data.halls;
+
     let btn = document.querySelector('.prices-cfg.config_selected');
 
     let frame = document.querySelector('.prices');
@@ -19,6 +20,7 @@ export async function pricesConfigurator() {
         inputsContainer.innerHTML = '';
     }
 
+    
     for (let hall of halls) {
         let standart = hall.hall_price_standart;
         let vip = hall.hall_price_vip;
@@ -40,18 +42,19 @@ export async function pricesConfigurator() {
                                 </label> 
                             </div>
                             <div class="btns_container">
-                                <button class="cancel" id="discard_changes_prices">Отмена</button>
-                                <button class="save" id="save_prices">Сохранить</button>
+                                <button class="cancel" id="discard_changes_prices" disabled>Отмена</button>
+                                <button class="save" id="save_prices" disabled>Сохранить</button>
                             </div>
                             `;
-    }
-}
+
 
     let standartPrice = document.getElementById('standart-price');
     let vipPrice = document.getElementById('vip-price');
 
 
     const discardChangesPrices = document.getElementById('discard_changes_prices');
+    const savePrices = document.getElementById('save_prices');
+
     discardChangesPrices.addEventListener('click', () => {
             standartPrice.value = standart;
             vipPrice.value = vip;
@@ -64,6 +67,10 @@ export async function pricesConfigurator() {
         else {
             event.target.style.color = 'rgb(0, 0, 0)'
         }
+
+        discardChangesPrices.disabled = false;
+        savePrices.disabled = false;
+
     })
     vipPrice.addEventListener('input', (event) => {
         if (event.target.value <= 0) {
@@ -72,7 +79,11 @@ export async function pricesConfigurator() {
         else {
             event.target.style.color = 'rgb(0, 0, 0)'
         }
-    })
 
+        discardChangesPrices.disabled = false;
+        savePrices.disabled = false;
+    })
+    }
+}
     editPrices();
 }

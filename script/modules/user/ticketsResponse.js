@@ -11,6 +11,7 @@ export async function check() {
     const cells = document.querySelectorAll('div.cell');
     const rows = document.querySelectorAll('div.row');
 
+
     let rowId = [];
     let cost = 0;
     let reservedCells = [];
@@ -108,11 +109,11 @@ export async function check() {
     getCode.addEventListener('click', () => {
         getCode.replaceWith(qrContainer);
         attentionParargaphs[0].innerText = 'Покажите QR-код нашему контроллеру для подтверждения бронирования.';
-        ticketsResponse();
+        ticketsSend();
     });
 
 
-    function ticketsResponse() {
+    function ticketsSend() {
         const selectedDate = document.querySelector('li.selected').firstElementChild.getAttribute('date');
         let tickets = [];
 
@@ -120,13 +121,14 @@ export async function check() {
         let ticket = {
             row: +activeCell.closest('div.row').id,
             place: +activeCell.id,
-            coast: +activeCell.getAttribute('price')
+            coast: activeCell.getAttribute('price')
         };
 
             tickets.push(ticket);
         });
 
 
+        console.log(tickets)
         const params = new FormData();
 
         params.set('seanceId', selectedSeanceId)
@@ -143,3 +145,26 @@ export async function check() {
     }
 };
 
+
+export async function ticketsResponse() {
+
+    const selectedDate = document.querySelector('li.selected').firstElementChild.getAttribute('date');
+    const buttons = document.querySelectorAll('.seance_btn');
+    let selectedSeanceId;
+
+    buttons.forEach(btn => {
+        let clicked = btn.getAttribute('clicked');
+
+        if (clicked === '1') {
+            selectedSeanceId = btn.getAttribute('seance_id')
+        }
+        
+    });
+
+    const response = await fetch(`https://shfe-diplom.neto-server.ru/hallconfig?seanceId=${selectedSeanceId}&date=${selectedDate}`)
+    const answer = await response.json()
+    const data = answer.result;
+    
+    
+    return data
+}

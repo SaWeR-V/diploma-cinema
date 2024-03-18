@@ -1,6 +1,6 @@
 import { fillTimetable } from "./modules/user/timetable.js";
 import { checkForSeances, checkForTimeOut } from "./modules/user/seancesCheck.js";
-import { check } from "./modules/user/ticketsResponse.js";
+import { check, ticketsResponse } from "./modules/user/ticketsResponse.js";
 
 export async function getData() {
     const response = await fetch('https://shfe-diplom.neto-server.ru/alldata');
@@ -16,13 +16,10 @@ export async function getData() {
 
 const data = await getData();
 
-console.log(data)
-
 const films = data.films;
 const halls = data.halls;
 const seances = data.seances;
 
-const frames = document.querySelectorAll('li.frame');
 const nav = document.querySelector('nav');
 const auth = document.querySelector('button.sign_in');
 const header = document.querySelector('.header_container');
@@ -37,8 +34,9 @@ checkForTimeOut();
     
 
 
-export function showHall() {
+export async function showHall() {
 
+    
     
     const seanceBtns = document.querySelectorAll('button.seance_btn');
     const cinemaBlocks = document.querySelectorAll('section.cinema_block');
@@ -136,12 +134,13 @@ export function showHall() {
                 for (let i = 0; i < hall.hall_rows; i++) {
                     const rowContainer = document.createElement('div');
                     rowContainer.className = 'row';
-                    rowContainer.id = (i + 1);
+                    rowContainer.id = i + 1;
                     
                     for (let k = 0; k < hall.hall_places; k++) {
                         const seat = document.createElement('div');
                         seat.className = 'cell';
                         rowContainer.appendChild(seat);
+                        seat.id = k + 1;
                     }
             
                     placesCont.appendChild(rowContainer);
@@ -154,7 +153,7 @@ export function showHall() {
             const cells = document.querySelectorAll('div.cell');
             cells.forEach(cell => {
                 cell.addEventListener('click', () => {
-                    if (cell.classList.contains('disabled')){
+                    if (cell.classList.contains('disabled') || cell.classList.contains('busy')) {
                         return
                     }
                     else {
@@ -163,51 +162,49 @@ export function showHall() {
                 })
             })
 
-            let temporaryArray = [];
+            
+            ticketsResponse().then(actualHallsCfg => {
+                
+                let actualCfg = actualHallsCfg
 
-            for (let hallCfg of halls){
-                if (hallCfg.id === +btn.id){
-                    for (let i = 0; i < hallCfg.hall_config.length; i++) {
-                        temporaryArray = temporaryArray.concat(hallCfg.hall_config[i])
+            
+                let temporaryArray = [];
+
+                for (let hallCfg of actualCfg){
+                    for (let i = 0; i < hallCfg.length; i++) {
+                        temporaryArray = temporaryArray.concat(hallCfg[i])
                     }
                 }
-            }
-
-            console.log(temporaryArray)
-
-            for (let i = 0; i < cells.length; i++) {
-                cells.forEach(cell => {
-
-                    cell.setAttribute('status', temporaryArray[i++]);
-
-                    if (cell.getAttribute('status') === 'vip') {
-                        cell.classList.add('vip')
-                        cell.setAttribute('price', hall.hall_price_vip)
-                    }
-                    else if (cell.getAttribute('status') === 'standart') {
-                        cell.setAttribute('price', hall.hall_price_standart)
-                    }
-                    
-                    else {
-                        cell.classList.add('disabled')
-                        cell.removeAttribute('price', '')
-                    }
-
-                })
-            };
-
-            let enabled = temporaryArray.filter(elem => elem !== "disabled");
-
-            for (let j = 1; j < enabled.length; j++) {
-                for (let cell of cells) {
-                    if (cell.getAttribute('status') !== 'disabled') {
-                        cell.id = j++;
-                    }
-                }
-            }
-        })
 
 
+                for (let i = 0; i < cells.length; i++) {
+                    cells.forEach(cell => {
+
+                        cell.setAttribute('status', temporaryArray[i++]);
+
+                        if (cell.getAttribute('status') === 'vip') {
+                            cell.classList.add('vip')
+                            cell.setAttribute('price', hall.hall_price_vip)
+                        }
+                        else if (cell.getAttribute('status') === 'standart') {
+                            cell.setAttribute('price', hall.hall_price_standart)
+                        }
+
+                        else if (cell.getAttribute('status') === 'taken') {
+                            cell.classList.add('busy')
+                            cell.setAttribute('price', '')
+                        }
+                        
+                        else {
+                            cell.classList.add('disabled')
+                            cell.removeAttribute('price', '')
+                        }
+
+                    })
+                };
+            })
+
+        });
             
             const cells = Array.from(document.querySelectorAll('.cell'));
             const book = document.querySelector('.book');
