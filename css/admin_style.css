@@ -214,6 +214,10 @@ a {
     width: 100%;
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
+=======
+    overflow: clip;
+>>>>>>> 2f3b2c3a07c0877178f4f88d12fbfb8f807ce918
 }
 
 .heading::before {
@@ -714,7 +718,13 @@ a {
     font-size: 16px;
     line-height: 18px;
     letter-spacing: 19px;
+<<<<<<< HEAD
     margin-right: -19px;
+=======
+    margin: auto;
+    position: relative;
+    left: 10px;
+>>>>>>> 2f3b2c3a07c0877178f4f88d12fbfb8f807ce918
     text-transform: uppercase;
     padding-bottom: 20px;
 }
@@ -994,7 +1004,10 @@ a {
     animation-duration: 1s;
     animation-iteration-count: infinite;
     animation-direction: alternate;
+<<<<<<< HEAD
     /* box-shadow: 0 0 15px goldenrod; */
+=======
+>>>>>>> 2f3b2c3a07c0877178f4f88d12fbfb8f807ce918
 }
 
 .footnotes {
@@ -1128,7 +1141,10 @@ a {
     .header_container {
         max-width: 768px;
         width: 95%;
+<<<<<<< HEAD
         padding: 14px;
+=======
+>>>>>>> 2f3b2c3a07c0877178f4f88d12fbfb8f807ce918
     }
     
     .login_form {
@@ -1141,6 +1157,10 @@ a {
     }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2f3b2c3a07c0877178f4f88d12fbfb8f807ce918
 @media (max-width: 390px) {
     .header_container {
         max-width: 390px;

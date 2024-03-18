@@ -140,10 +140,6 @@ a {
 	user-select: none;
 }
 
-/* .first_frame, .last_frame {
-    min-width: 8%;
-} */
-
 .day {
     font-family: 'Roboto';
     color: var(--color-black);
