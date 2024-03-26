@@ -29,10 +29,6 @@ export async function hallCfgInjection() {
         }   
         
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 2f3b2c3a07c0877178f4f88d12fbfb8f807ce918
 
 
     hallPlaces += `<label class="annot_col">Рядов, шт
@@ -99,29 +95,11 @@ export async function hallCfgInjection() {
                     seat.className = 'cell';
                     rowContainer.appendChild(seat);
                     }
-<<<<<<< HEAD
 
                 placesContainer.appendChild(rowContainer);
             }
 
             if (placesContainer) {
-=======
-
-                placesContainer.appendChild(rowContainer);
-            }
-            
-
-            if (placesContainer) {
-
-                const placesWrapper = document.getElementById('map_container');
-                
-                if (placesWrapper.scrollWidth > placesContainer.offsetWidth) {
-                    placesContainer.style.overflowX = 'auto';
-                    placesContainer.style.alignItems = 'normal';
-                }
-
-
->>>>>>> 2f3b2c3a07c0877178f4f88d12fbfb8f807ce918
                 const cells = document.querySelectorAll('div.cell');
                 let currentStatusIndex = 0;
             
